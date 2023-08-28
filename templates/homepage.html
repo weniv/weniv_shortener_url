@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>weniv shortener</title>
+
+</head>
+<body>
+
+{% if data %}
+    <h1>Shortened URL: <a href="{{ origin_url }}">http://we.niv/{{ data }}</a></h1>
+{% endif %}
+
+<script src="{% static 'js/three.min.js' %}"></script>
+<script src="https://unpkg.com/styled-components/dist/styled-components.min.js"></script>
+</body>
+</html>
