@@ -1,5 +1,6 @@
 # Create your views here.
 import base64
+import string
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -8,18 +9,24 @@ from rest_framework.response import Response
 
 from apps.app_shortener_url.CustomException import CurrentException
 from apps.app_shortener_url.models import Shortener
-from apps.app_shortener_url.serializers import UrlSerializer
 
 DOMAIN_NAME: str = "http://we.niv"
+MAP: str = string.digits + string.ascii_letters
 
 
-def home(request):
+def home(request) -> Response:
     return render(request, "homepage.html")
 
 
-def transform_url(original_url: str) -> str:
-    original_url_bytes = original_url.encode("ascii")
-    short_url =  base64.b64encode(original_url_bytes).decode("ascii")
+def encode_url(original_url: str, hash_key: int) -> str:
+    short_url = ""
+    hash_map = {}
+    while hash_key > 0:
+        p = hash_key % 62
+        short_url += MAP[p]
+        hash_key = hash_key // 62
+    hash_map[short_url] = original_url
+    print(hash_map, short_url)
     return short_url
 
 
@@ -30,20 +37,10 @@ def decode_url(short_url: str) -> str:
 
 @csrf_exempt
 def convert_url(request) -> Response:
-
-    try:
-        origin = "https://chimaek.net"
-        # url = Shortener.objects.get(original_url=request.data["original_url"])
-        data = transform_url(original_url=origin)
-        return render(request, "homepage.html", {"data": data,"origin_url":origin})
-
-    except Shortener.DoesNotExist:
-        serializer = UrlSerializer(data =request.data)
-        if serializer.is_valid(raise_exception=True):
-            short_url = transform_url(request.data["original_url"])
-            serializer.save(short_url=short_url)
-            return Response(serializer.data)
-
+    origin = "https://chimaek.net"
+    hash_key = Shortener.objects.order_by("-id").first().id + 1
+    data = encode_url(origin, hash_key)
+    return render(request, "homepage.html", {"data": data, "origin_url": origin})
 
 
 def redirect_url(request, short_url: str):
