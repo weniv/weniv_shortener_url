@@ -11,6 +11,8 @@ class Shortener(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
 
+    hash_key = models.BigIntegerField(db_column="hash_key", name="hash_key", null=False, blank=False)
+
     visit_count = models.IntegerField(default=0)
 
     class Meta:
