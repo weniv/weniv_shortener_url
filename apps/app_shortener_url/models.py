@@ -11,17 +11,18 @@ class Shortener(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
 
-    hash_key = models.BigIntegerField(db_column="hash_key", name="hash_key", null=False, blank=False)
+    hash_key = models.BigIntegerField(
+        db_column="hash_key", name="hash_key", null=False, blank=False
+    )
 
     visit_count = models.IntegerField(default=0)
 
     class Meta:
-
         ordering = ["-created"]
 
     def __str__(self):
+        return f"{self.original_url} to {self.short_url}"
 
-        return f'{self.original_url} to {self.short_url}'
     # active = models.BooleanField(default=False, null=False, blank=False, name="active")
     # created_at = models.DateTimeField(
     #     name="createTime", auto_now=True, null=False, blank=False
