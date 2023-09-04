@@ -8,7 +8,7 @@
 </head>
 <body>
 
-{% if data %}
+{% if data and  origin_url %}
     <h1>Shortened URL: <a href="{{ origin_url }}">http://we.niv/{{ data }}</a></h1>
 {% endif %}
 
