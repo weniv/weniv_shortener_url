@@ -41,9 +41,14 @@ def parsing_data_to_json(data: object):
 
 @csrf_exempt
 def convert_url(request):
+
+    # 파싱
     origin_url = parsing_data_to_json(request.body)["origin_url"]
     if origin_url == "":
         raise Http404("Origin URL does not exist.")
+
+
+    check_url_startswith(origin_url)
 
     try:
         hash_key = (Shortener.objects.order_by("-id").first().id + 1) + APPEND_HASH_KEY
@@ -62,7 +67,15 @@ def convert_url(request):
     )
 
 
+# http 문자열 예외 처리
+def check_url_startswith(origin_url):
+    if not origin_url.startswith("http") or not origin_url.startswith("https"):
+        raise Http404("Origin URL does not start with http or https.")
+
+
 def redirect_url(request, short_url: str):
+
+
     try:
         url = Shortener.objects.get(short_url=short_url)
         url.visit_count += 1
