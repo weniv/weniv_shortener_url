@@ -26,12 +26,13 @@ COPY . /usr/src/app/
 # Run entrypoint.sh
 
 #ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
 
-RUN python3 manage.py collectstatic --noinput
-
-# Run server
 EXPOSE 8000
 
-CMD ["python3", "manage.py", "runserver","0.0.0.0:8000"]
+
+# Run server
+RUN #chmod +x entry_point.sh
+CMD [ "./entry_point.sh" ]
 
 
