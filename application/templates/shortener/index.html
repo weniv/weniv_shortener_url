@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="{% url 'shortener:index' %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="original_url"><h5>제목</h5></label>
+        <input
+                type="text"
+                class="form-control"
+                id="original_url"
+                name="original_url"
+                placeholder="제목을 입력하세요"
+        />
+        <input type="submit" value="submit"/>
+    </div>
+</form>
+</body>
+</html>

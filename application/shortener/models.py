@@ -11,4 +11,10 @@ class ShortenURL(models.Model):
     def __str__(self):
         return self.original_url + ' -> ' + self.shorten_url
 
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Shorten URL'
+        verbose_name_plural = 'Shorten URLs'
+        db_table = 'shortener_url'
+
 
