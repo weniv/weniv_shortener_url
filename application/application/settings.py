@@ -146,3 +146,5 @@ CACHES = {
         }
     }
 }
+
+BASE_NAME = "we.niv"

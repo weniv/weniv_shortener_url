@@ -3,11 +3,19 @@ from django.core.cache import cache
 from .models import ShortenURL
 import hashlib
 import base64
+from django.conf import settings
+from urllib.parse import urlparse
+
+BASE_NAME = settings.BASE_NAME
 
 
 def index(request):
     if request.method == 'POST':
         original_url = request.POST.get('original_url')
+        # check url validation
+        if not is_valid_url(original_url):
+            return render(request, 'shortener/index.html', {'error': 'Invalid URL'})
+
         context = manage_url(original_url)
         return render(request, 'shortener/index.html', context)
     return render(request, 'shortener/index.html')
@@ -33,7 +41,7 @@ def generate_shorten_url(original_url: str) -> str:
         hash_data = hashlib.sha256(original_url.encode('utf-8')).digest()
         shorten_url = base64.urlsafe_b64encode(hash_data).decode('utf-8')[:6]
         if not ShortenURL.objects.filter(shorten_url=shorten_url).exists():
-            return shorten_url
+            return f"https://{BASE_NAME}/{shorten_url}"
         original_url += '0'  # Adjust the URL slightly to try and avoid collisions.
     raise ValueError("Unable to generate a unique shorten URL")
 
@@ -47,3 +55,11 @@ def fetch_and_cache_original_url(shorten_url):
     original_url = ShortenURL.objects.get(shorten_url=shorten_url).original_url
     cache.set(shorten_url, original_url)
     return original_url
+
+
+def is_valid_url(url) -> bool:
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
