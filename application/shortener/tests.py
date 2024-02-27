@@ -16,15 +16,17 @@ from django.core.cache import cache
 from urllib.parse import urlparse
 import base64
 from .views import generate_or_fetch_shorten_url, generate_shorten_url, fetch_and_cache_original_url, is_valid_url
-
+from django.db import transaction
 
 class Test(TestCase):
+
 
     def test_get_index(self):
         request = RequestFactory().get(reverse(f'{app_name}:index'))
         response = index(request)
         self.assertEqual(response.status_code, 200)
 
+    @transaction.atomic
     def test_post_index(self):
         original_url = get_random_original_url()
         request = RequestFactory().post(reverse(f'{app_name}:index'), {'original_url': original_url})
@@ -32,6 +34,7 @@ class Test(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(original_url, response.content.decode('utf-8'))
 
+    @transaction.atomic
     def test_get_redirect_original_url(self):
         original_url = get_random_original_url()
         shorten_url_data = generate_shorten_url(original_url)
@@ -54,6 +57,7 @@ class Test(TestCase):
         self.assertEqual(ShortenURL.objects.get(shorten_url=shorten_url).original_url, original_url)
         self.assertEqual(cache.get(shorten_url), original_url)
 
+    @transaction.atomic
     def test_generate_shorten_url(self):
         original_url = get_random_original_url()
         shorten_url = generate_shorten_url(original_url)
@@ -62,6 +66,7 @@ class Test(TestCase):
         self.assertEqual(ShortenURL.objects.get(shorten_url=shorten_url).original_url, original_url)
         self.assertEqual(cache.get(shorten_url), original_url)
 
+    @transaction.atomic
     def test_fetch_and_cache_original_url(self):
         original_url = get_random_original_url()
         shorten_url_data = generate_shorten_url(original_url)
