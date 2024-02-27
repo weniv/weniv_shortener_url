@@ -24,7 +24,9 @@ def index(request):
 def manage_url(original_url):
     context = {'original_url': original_url}
     shorten_url = generate_or_fetch_shorten_url(original_url)
-    context.update(shorten_url=shorten_url, created_at=ShortenURL.objects.get(shorten_url=shorten_url).created_at)
+    shorten_url_code = shorten_url.split('/')[-1]
+    context.update(shorten_url=shorten_url, created_at=ShortenURL.objects.get(shorten_url=shorten_url).created_at,
+                   shorten_url_code=shorten_url_code)
     return context
 
 
@@ -46,12 +48,14 @@ def generate_shorten_url(original_url: str) -> str:
     raise ValueError("Unable to generate a unique shorten URL")
 
 
-def redirect_original_url(request, shorten_url):
-    original_url = cache.get(shorten_url) or fetch_and_cache_original_url(shorten_url)
+def redirect_original_url(request, shorten_url_code):
+    shorten_url_code = f"https://{BASE_NAME}/{shorten_url_code}"
+    original_url = cache.get(shorten_url_code) or fetch_and_cache_original_url(shorten_url_code)
     return redirect(original_url)
 
 
 def fetch_and_cache_original_url(shorten_url):
+    print(shorten_url)
     original_url = ShortenURL.objects.get(shorten_url=shorten_url).original_url
     cache.set(shorten_url, original_url)
     return original_url

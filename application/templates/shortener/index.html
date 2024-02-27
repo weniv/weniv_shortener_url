@@ -23,8 +23,8 @@
     </form>
 {% else %}
     <h1>Shorten URL</h1>
-    <p>Shorten URL: <a href="{{ shorten_url }}">{{ shorten_url }}</a></p>
-    <p>Original URL: <a href="{{ origin_rul }}">{{ original_url }}</a></p>
+    <p>Shorten URL: <a href="{% url 'shortener:redirect_original_url' shorten_url_code %}">{{ shorten_url }}</a></p>
+    <p>Original URL: <a href="{{ origin_url }}">{{ original_url }}</a></p>
     <p>Created at: {{ created_at }}</p>
 
 {% endif %}
