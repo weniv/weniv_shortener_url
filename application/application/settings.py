@@ -27,9 +27,9 @@ env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False if env('mode') == 'production' else True
+DEBUG = False if env('MODE') == 'production' else True
 
-ALLOWED_HOSTS = ["*"] if env('mode') == 'dev' else [env('HOST')]
+ALLOWED_HOSTS = ["*"] if env('MODE') == 'dev' else [env('HOST')]
 
 # Application definition
 
