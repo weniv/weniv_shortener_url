@@ -34,7 +34,7 @@ jobs:
         script: |
           set -e
           cd /home/ubuntu/app/shortener/application
-          git pull origin main
+          git pull origin master
 
           # echo "SECRET_KEY=\"${{ secrets.SECRET_KEY }}\"" > .env
           # echo "DEBUG='${{ secrets.DEBUG }}'" > .env
