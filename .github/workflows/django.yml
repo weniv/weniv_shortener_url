@@ -21,10 +21,10 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+    # - name: Install Dependencies
+    #   run: |
+    #     python -m pip install --upgrade pip
+    #     pip install -r requirements.txt
     - name: 서버 배포
       uses: appleboy/ssh-action@master
       with:
@@ -33,12 +33,12 @@ jobs:
         password: ${{ secrets.SERVER_PASSWORD }}
         script: |
           set -e
-          cd /home/ubuntu/app/shortener
-          git pull origin main
+          cd /home/ubuntu/app/shortener/application
+          git pull origin master
 
           # echo "SECRET_KEY=\"${{ secrets.SECRET_KEY }}\"" > .env
           # echo "DEBUG='${{ secrets.DEBUG }}'" > .env
 
-          source venv/bin/activate
+          source ./venv/bin/activate
           pip install -r requirements.txt
           sudo systemctl restart gunicorn.service
