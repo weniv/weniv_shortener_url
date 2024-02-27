@@ -33,7 +33,7 @@ jobs:
         password: ${{ secrets.SERVER_PASSWORD }}
         script: |
           set -e
-          cd /home/ubuntu/app/shortener
+          cd /home/ubuntu/app/shortener/application
           git pull origin main
 
           # echo "SECRET_KEY=\"${{ secrets.SECRET_KEY }}\"" > .env
