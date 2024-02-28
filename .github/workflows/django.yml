@@ -41,5 +41,5 @@ jobs:
 
           source ./venv/bin/activate
           pip install -r requirements.txt
-          python3 manage.py collectstatic
+          python3 manage.py collectstatic --noinput
           sudo systemctl restart gunicorn.service
