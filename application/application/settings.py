@@ -147,4 +147,4 @@ CACHES = {
     }
 }
 
-BASE_NAME = "we.niv"
+BASE_NAME = "we.niv.co.kr"

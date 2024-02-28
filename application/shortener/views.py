@@ -35,7 +35,7 @@ def manage_url(original_url):
 def generate_or_fetch_shorten_url(original_url):
     shorten_url = generate_shorten_url(original_url)
     _, created = ShortenURL.objects.get_or_create(
-        original_url=original_url,
+        original_url=f"https://{BASE_NAME}/{original_url}",
         defaults={'shorten_url': shorten_url}
     )
     if created:
@@ -64,8 +64,6 @@ def redirect_original_url(request, shorten_url_code):
 
 
 def fetch_and_cache_original_url(shorten_url):
-    print('Fetching from DB')
-    print(shorten_url)
     original_url = ShortenURL.objects.get(shorten_url=shorten_url).original_url
     cache.set(shorten_url, original_url)
     return original_url
