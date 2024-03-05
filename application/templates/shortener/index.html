@@ -1,38 +1,114 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Title</title>
-    <link rel="icon" href="{% static 'favicon.ico' %}" /> 
-</head>
-<body>
-{% if not shorten_url %}
-    <form action="{% url 'shortener:index' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="original_url"><h5>제목</h5></label>
-            <input
-                    type="text"
-                    class="form-control"
-                    id="original_url"
-                    name="original_url"
-                    placeholder="제목을 입력하세요"
-            />
-            <input type="submit" value="submit"/>
+    <link rel="icon" href="{% static 'favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static '/css/style.css' %}" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1><a href="/">Shorten URL</a></h1>
+        <p class="short-friends">
+          <img src="{% static '/img/1_stella.svg' %}" alt="" />
+          <img src="{% static '/img/2_chilli.svg' %}" alt="" />
+          <img src="{% static '/img/3_gary.svg' %}" alt="" />
+          <img src="{% static '/img/4_harry.svg' %}" alt="" />
+          <img src="{% static '/img/5_woongi.svg' %}" alt="" />
+          <img src="{% static '/img/6_ali.svg' %}" alt="" />
+          <img src="{% static '/img/7_python.svg' %}" alt="" />
+        </p>
+      </header>
+
+      {% if not shorten_url %}
+      <section class="url-section">
+        <h2 class="section-title">URL을 입력해주세요</h2>
+        <form
+          action="{% url 'shortener:index' %}"
+          method="post"
+          class="url-form"
+        >
+          {% csrf_token %}
+          <label for="original_url" class="a11y-hidden">URL</label>
+          <input
+            type="url"
+            class="form-control url-form__url"
+            id="original_url"
+            name="original_url"
+            placeholder="https://example.com"
+            required
+          />
+          <button type="submit" class="url-form__button">
+            <span class="a11y-hidden">입력</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              viewBox="0 0 40 40"
+              fill="#2e6ff2"
+            >
+              <path
+                d="M10.705 10.1985C9.51369 6.37253 13.6505 3.10171 17.1036 5.10245L34.832 15.3742C38.3893 17.4354 38.3893 22.5646 34.832 24.6258L17.1036 34.8975C13.6505 36.8983 9.51369 33.6275 10.705 29.8015L13.7569 20L10.705 10.1985ZM16.4319 21.5L13.5693 30.6933C13.1966 31.8905 14.4942 32.9423 15.5996 32.3018L33.328 22.03C34.8907 21.1246 34.8907 18.8754 33.328 17.97L15.5996 7.69822C14.4942 7.05771 13.1966 8.10948 13.5693 9.30665L16.4319 18.5L23.9157 18.5C24.7441 18.5 25.4157 19.1716 25.4157 20C25.4157 20.8284 24.7441 21.5 23.9157 21.5H16.4319Z"
+              />
+              <path
+                d="M3.5 20C3.5 19.1716 4.17157 18.5 5 18.5H9C9.82843 18.5 10.5
+              19.1716 10.5 20C10.5 20.8284 9.82843 21.5 9 21.5H5C4.17157 21.5 3.5
+              20.8284 3.5 20Z"
+              />
+              <path
+                d="M2.5 15C2.5 14.1716 3.17157 13.5 4
+              13.5H8C8.82843 13.5 9.5 14.1716 9.5 15C9.5 15.8284 8.82843 16.5 8
+              16.5H4C3.17157 16.5 2.5 15.8284 2.5 15Z"
+              />
+              <path
+                d="M2.5 25C2.5 24.1716 3.17157 23.5 4 23.5H8C8.82843 23.5 9.5
+              24.1716 9.5 25C9.5 25.8284 8.82843 26.5 8 26.5H4C3.17157 26.5 2.5
+              25.8284 2.5 25Z"
+              />
+            </svg>
+          </button>
+        </form>
+      </section>
+      {% else %}
+      <section class="result-section">
+        <h2 class="section-title">Shorten URL</h2>
+        <p class="result">
+          <span> {{ shorten_url }}</span>
+
+          <button type="button" id="copyBtn" class="copy__button">
+            <img src="{% static '/img/copy.svg' %}" alt="" />
+            <span class="a11y-hidden">복사</span>
+          </button>
+        </p>
+
+        <div class="bottom">
+          <p class="origin-url">
+            <span>[Original URL]</span>
+            <a href="{{ origin_url }}">{{ original_url }}</a>
+          </p>
+
+          <p class="btn-group">
+            <a
+              href="{% url 'shortener:redirect_original_url' shorten_url_code %}"
+              target="_blank"
+              >바로가기</a
+            >
+            <a href="/" class="btn-back">
+              <img src="{% static '/img/back.svg' %}" alt="" />
+              이전</a
+            >
+          </p>
         </div>
-    </form>
-{% else %}
-    <h1>Shorten URL</h1>
-    <p>Shorten URL: <a href="{% url 'shortener:redirect_original_url' shorten_url_code %}">{{ shorten_url }}</a></p>
-    <p>Original URL: <a href="{{ origin_url }}">{{ original_url }}</a></p>
-    <p>Created at: {{ created_at }}</p>
+      </section>
 
-{% endif %}
+      {% endif %} {% if error %}
+      <p>유효하지 않은 URL을 입력하셨습니다. : {{ error }}</p>
+      {% endif %}
+    </div>
+    <footer>weniv</footer>
 
-{% if error %}
-    <p>유효하지 않은 URL을 입력하셨습니다. : {{ error }}</p>
-{% endif %}
-
-</body>
+    <script src="{% static '/js/script.js' %}"></script>
+  </body>
 </html>
