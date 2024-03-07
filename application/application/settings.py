@@ -147,4 +147,4 @@ CACHES = {
     }
 }
 
-BASE_NAME = "wnv.link"
+BASE_NAME = "weniv.link"
