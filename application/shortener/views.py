@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 BASE_NAME = settings.BASE_NAME
 
 
-@ratelimit(key='ip', rate='15/m', block=False)
+@ratelimit(key='ip', rate='8/m', block=False)
 def index(request):
     was_limit_exceeded = getattr(request, 'limited', False)
     if was_limit_exceeded:
@@ -74,7 +74,7 @@ def generate_shorten_url(original_url: str) -> str:
     raise ValueError("Failed to generate a unique shorten URL after multiple attempts")
 
 
-@ratelimit(key='ip', rate='15/m', block=False)
+@ratelimit(key='ip', rate='8/m', block=False)
 def redirect_original_url(request, shorten_url_code):
     was_limit_exceeded = getattr(request, 'limited', False)
     if was_limit_exceeded:
