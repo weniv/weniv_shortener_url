@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.core.cache import cache
+from django_ratelimit.decorators import ratelimit
+from django.http import JsonResponse
 from .models import ShortenURL
 import hashlib
 import base64
@@ -9,7 +11,12 @@ from urllib.parse import urlparse
 BASE_NAME = settings.BASE_NAME
 
 
+@ratelimit(key='ip', rate='15/m', block=False)
 def index(request):
+    was_limit_exceeded = getattr(request, 'limited', False)
+    if was_limit_exceeded:
+        return JsonResponse({'error': 'Rate limit exceeded'}, status=429)
+
     if request.method == 'POST':
         original_url = request.POST.get('original_url')
         if not is_valid_url(original_url):
@@ -67,7 +74,12 @@ def generate_shorten_url(original_url: str) -> str:
     raise ValueError("Failed to generate a unique shorten URL after multiple attempts")
 
 
+@ratelimit(key='ip', rate='15/m', block=False)
 def redirect_original_url(request, shorten_url_code):
+    was_limit_exceeded = getattr(request, 'limited', False)
+    if was_limit_exceeded:
+        return JsonResponse({'error': 'Rate limit exceeded'}, status=429)
+
     shorten_url = f"https://{BASE_NAME}/{shorten_url_code}"
     original_url = cache.get(shorten_url) or fetch_and_cache_original_url(shorten_url)
     if not original_url:
