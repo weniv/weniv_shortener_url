@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -18,3 +19,12 @@ class ShortenURL(models.Model):
         db_table = 'shortener_url'
 
 
+class AccessLog(models.Model):
+    ip_address = models.CharField(max_length=45)  # IPv4와 IPv6 지원
+    access_date = models.DateField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('ip_address', 'access_date')  # IP와 날짜 조합으로 유니크 설정
+
+    def __str__(self):
+        return f"{self.ip_address} - {self.access_date}"

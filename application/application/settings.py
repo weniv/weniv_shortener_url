@@ -11,11 +11,18 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+
+from django.conf import settings
 from environ import Env
 import os
-
+from celery import Celery
+from celery.schedules import crontab
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+app = Celery('application')
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 env = Env()
 env.read_env(os.path.join(BASE_DIR, '.env'))
@@ -148,6 +155,14 @@ CACHES = {
     }
 }
 
-RATELIMIT_IP_META_KEY = 'HTTP_X_FORWARDED_FOR'
 
+RATELIMIT_IP_META_KEY = 'HTTP_X_FORWARDED_FOR' if env('MODE') == 'production' else 'REMOTE_ADDR'
+DISCORD_MAU_WEB_HOOK = env('DISCORD_MAU_WEB_HOOK')
 BASE_NAME = "weniv.link"
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Seoul'
