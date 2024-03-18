@@ -87,6 +87,12 @@ h1 {
   letter-spacing: 0.2em;
   font-weight: bold;
   font-size: fcSize(32, 48);
+  margin-top: 1rem;
+
+  img {
+    width: 50rem;
+    max-width: 100%;
+  }
 }
 
 .section-title {

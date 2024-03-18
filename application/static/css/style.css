@@ -70,6 +70,11 @@ h1 {
   letter-spacing: 0.2em;
   font-weight: bold;
   font-size: clamp(3.2rem, 4.8vw, 4.8rem);
+  margin-top: 1rem;
+}
+h1 img {
+  width: 50rem;
+  max-width: 100%;
 }
 
 .section-title {

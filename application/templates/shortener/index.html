@@ -8,11 +8,40 @@
     <link rel="icon" href="{% static 'favicon.ico' %}" />
     <link rel="stylesheet" href="{% static '/css/style.css' %}" />
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+
+    <link rel="canonical" href="https://weniv.link" />
+    <meta
+      name="description"
+      content="짧고 귀여운 URL 단축 서비스, 링크를 간편하게! 단축 URL과 QR 코드를 생성 합니다."
+    />
+    <meta property="og:type" content="Website" />
+    <meta property="og:url" content="https://weniv.link" />
+    <meta property="og:title" content="Weniv Shorten URL" />
+    <meta property="og:image" content="{% static '/img/OG.png' %}" />
+    <meta
+      property="og:description"
+      content="짧고 귀여운 URL 단축 서비스, 링크를 간편하게! 단축 URL과 QR 코드를 생성 합니다."
+    />
+
+    <meta name="twitter:card" content="twitter:card" />
+    <meta name="twitter:title" content="Weniv Shorten URL" />
+    <meta
+      name="twitter:description"
+      content="짧고 귀여운 URL 단축 서비스, 링크를 간편하게! 단축 URL과 QR 코드를 생성 합니다."
+    />
+    <meta name="twitter:image" content="{% static '/img/OG.png' %}" />
   </head>
   <body>
     <div class="wrap">
       <header>
-        <h1><a href="/">Shorten URL</a></h1>
+        <h1>
+          <a href="/">
+            <img
+              src="{% static '/img/weniv-link-logo.svg' %}"
+              alt="weniv.link"
+            />
+          </a>
+        </h1>
         <p class="short-friends">
           <img src="{% static '/img/1_stella.svg' %}" alt="" />
           <img src="{% static '/img/2_chilli.svg' %}" alt="" />
