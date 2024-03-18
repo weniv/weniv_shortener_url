@@ -3,6 +3,7 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weniv Shorten URL</title>
     <link rel="icon" href="{% static 'favicon.ico' %}" />
     <link rel="stylesheet" href="{% static '/css/style.css' %}" />
@@ -75,7 +76,7 @@
       <section class="result-section">
         <h2 class="section-title">Shorten URL</h2>
         <p class="result">
-          <span> {{ shorten_url }}</span>
+          <span>{{ shorten_url }}</span>
 
           <button type="button" id="copyBtn" class="copy__button">
             <img src="{% static '/img/copy.svg' %}" alt="" />
