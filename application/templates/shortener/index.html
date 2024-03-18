@@ -7,6 +7,7 @@
     <title>Weniv Shorten URL</title>
     <link rel="icon" href="{% static 'favicon.ico' %}" />
     <link rel="stylesheet" href="{% static '/css/style.css' %}" />
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -83,6 +84,10 @@
             <span class="a11y-hidden">복사</span>
           </button>
         </p>
+        <div class="qrcode_wrap">
+          <h2 class="section-title">QR Code</h2>
+          <div id="qrcode"></div>
+        </div>
 
         <div class="bottom">
           <p class="origin-url">

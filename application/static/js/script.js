@@ -1,3 +1,4 @@
+// 복사
 let copyBtn = document.getElementById("copyBtn");
 
 const handleClipBoard = async (e) => {
@@ -54,3 +55,13 @@ const handleClipBoard = async (e) => {
 };
 
 copyBtn.addEventListener("click", handleClipBoard);
+
+// QR
+const qrUrl = document.querySelector(".result span").textContent;
+const qrcodeContainer = document.getElementById("qrcode");
+qrcodeContainer.innerHTML = "";
+
+QRCode.toCanvas(qrUrl, { width: 240 }, function (error, canvas) {
+  if (error) console.error(error);
+  qrcodeContainer.appendChild(canvas);
+});

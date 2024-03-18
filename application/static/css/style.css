@@ -161,8 +161,10 @@ h1 {
 [class*=__button]:disabled svg {
   fill: #f3f5fa;
 }
-[class*=__button]:not([disabled]):hover {
-  background-color: #dee8ff;
+@media (hover: hover) {
+  [class*=__button]:not([disabled]):hover {
+    background-color: #dee8ff;
+  }
 }
 
 .copy__button {
@@ -285,9 +287,11 @@ h1 {
   font-size: 0.85em;
   transition: all 0.3s;
 }
-.btn-group a:hover {
-  border: 1px solid rgba(46, 111, 242, 0.8);
-  background-color: rgba(46, 111, 242, 0.1);
+@media (hover: hover) {
+  .btn-group a:hover {
+    border: 1px solid rgba(46, 111, 242, 0.8);
+    background-color: rgba(46, 111, 242, 0.1);
+  }
 }
 .btn-group a.btn-back {
   background-color: #2e6ff2;
@@ -297,8 +301,10 @@ h1 {
 .btn-group a.btn-back img {
   width: 1.6em;
 }
-.btn-group a.btn-back:hover img {
-  animation: move 0.4s infinite alternate both;
+@media (hover: hover) {
+  .btn-group a.btn-back:hover img {
+    animation: move 0.4s infinite alternate both;
+  }
 }
 
 @keyframes move {
@@ -322,4 +328,20 @@ body {
 }
 body .wrap {
   flex-grow: 1;
+}
+
+.qrcode_wrap {
+  margin-top: 1em;
+}
+
+#qrcode {
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+#qrcode canvas {
+  max-width: 100%;
+  height: auto !important;
 }

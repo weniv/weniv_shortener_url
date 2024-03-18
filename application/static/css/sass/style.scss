@@ -183,8 +183,10 @@ h1 {
       fill: $grayLv1;
     }
   }
-  &:not([disabled]):hover {
-    background-color: $activation;
+  @media (hover: hover) {
+    &:not([disabled]):hover {
+      background-color: $activation;
+    }
   }
 }
 
@@ -314,9 +316,11 @@ h1 {
     font-size: 0.85em;
 
     transition: all 0.3s;
-    &:hover {
-      border: 1px solid rgba($primary, 0.8);
-      background-color: rgba($primary, 0.1);
+    @media (hover: hover) {
+      &:hover {
+        border: 1px solid rgba($primary, 0.8);
+        background-color: rgba($primary, 0.1);
+      }
     }
     &.btn-back {
       background-color: $primary;
@@ -325,10 +329,11 @@ h1 {
       img {
         width: 1.6em;
       }
-
-      &:hover {
-        img {
-          animation: move 0.4s infinite alternate both;
+      @media (hover: hover) {
+        &:hover {
+          img {
+            animation: move 0.4s infinite alternate both;
+          }
         }
       }
     }
@@ -358,5 +363,21 @@ body {
 
   .wrap {
     flex-grow: 1;
+  }
+}
+.qrcode_wrap {
+  margin-top: 1em;
+}
+#qrcode {
+  padding: 2rem;
+  background-color: #fff;
+
+  border-radius: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+
+  canvas {
+    max-width: 100%;
+    height: auto !important;
   }
 }
