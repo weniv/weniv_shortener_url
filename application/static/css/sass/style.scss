@@ -65,6 +65,9 @@ a {
   color: inherit;
   text-decoration: none;
 }
+button {
+  cursor: pointer;
+}
 
 img,
 svg {
@@ -375,15 +378,40 @@ body {
   margin-top: 1em;
 }
 #qrcode {
-  padding: 2rem;
-  background-color: #fff;
-
-  border-radius: 1rem;
-  margin-top: 1rem;
-  text-align: center;
-
   canvas {
     max-width: 100%;
     height: auto !important;
+  }
+}
+
+.qr_wrap {
+  padding: 2rem 2rem 4rem 2rem;
+  background-color: #fff;
+  border-radius: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+#downloadButton {
+  display: inline-flex;
+  word-break: keep-all;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2em;
+  min-height: 3.6rem;
+  padding: 0.2em 1em;
+
+  border: 1px solid rgba($primary, 0.3);
+  color: $primaryA11y;
+  border-radius: 0.5em;
+  font-size: 0.85em;
+
+  transition: all 0.3s;
+  @media (hover: hover) {
+    &:hover {
+      background-color: $primary;
+      color: #fff;
+      border-color: $primary;
+    }
   }
 }
