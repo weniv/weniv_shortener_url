@@ -3,6 +3,13 @@
   ⚠️ .scss 파일을 수정해주세요
 */
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+ul,
+li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
 html {
   font-size: 10px;
 }
@@ -321,15 +328,6 @@ h1 img {
     transform: translateX(-0.3em);
   }
 }
-footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #8d9299;
-  border-top: 1px solid #d9dbe0;
-  height: 6rem;
-}
-
 body {
   display: flex;
   flex-direction: column;
@@ -375,5 +373,151 @@ body .wrap {
     background-color: #2e6ff2;
     color: #fff;
     border-color: #2e6ff2;
+  }
+}
+
+.footer {
+  border-top: 1px solid #d9dbe0;
+  padding: 3rem 0;
+}
+.footer p {
+  color: #8d9299;
+  font-size: 1.4rem;
+}
+.footer .inner {
+  width: 120rem;
+  max-width: calc(100% - 6rem);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.footer .footer-logo {
+  display: block;
+}
+.footer .footer-logo img {
+  height: 3rem;
+}
+.footer .weniv-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.6rem;
+  font-size: 1.3rem;
+  flex-grow: 1;
+}
+.footer .weniv-info ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2em;
+}
+.footer .weniv-info ul li {
+  color: #47494d;
+}
+.footer .weniv-info ul li:not(:last-child):after {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 0.8em;
+  background-color: #8d9299;
+  margin-right: 0.8em;
+  margin-left: 0.8em;
+}
+@media screen and (max-width: 798px) {
+  .footer .inner {
+    flex-direction: column;
+  }
+  .footer .inner .weniv-info {
+    align-items: center;
+    justify-content: center;
+  }
+  .footer .inner .weniv-info ul {
+    justify-content: center;
+  }
+}
+.footer .sns-link {
+  flex-shrink: 0;
+  display: flex;
+  gap: 0.8rem;
+}
+.footer .sns-link a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border: 1px solid #d9dbe0;
+  border-radius: 0.8rem;
+  transition: all 0.3s;
+}
+.footer .sns-link a img {
+  filter: grayscale(100%);
+  opacity: 0.8;
+}
+@media (hover: hover) {
+  .footer .sns-link a:hover {
+    border-color: rgba(46, 111, 242, 0.5);
+    background-color: rgba(46, 111, 242, 0.05);
+  }
+  .footer .sns-link a:hover img {
+    filter: grayscale(0);
+    opacity: 1;
+  }
+}
+
+.more_wrap {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+.more_wrap p {
+  font-size: 0.8em;
+  border: 1px solid rgba(46, 111, 242, 0.5);
+  background-color: #fff;
+  border-radius: 2rem 0 2rem 2rem;
+  padding: 0.5em 1em;
+  transform-origin: 100% 50%;
+  animation: fadeIn 0.5s 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) both;
+}
+.more_wrap .more {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2e6ff2;
+  width: 4.8rem;
+  height: 4.8rem;
+  border-radius: 50%;
+  box-shadow: 0px 4px 15px 0px rgba(0, 0, 0, 0.1);
+}
+.more_wrap .more img {
+  width: 60%;
+}
+@media (hover: hover) {
+  .more_wrap .more img:hover {
+    animation: move 0.2s infinite alternate both;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes move {
+  0% {
+    transform: translateY(5%);
+  }
+  100% {
+    transform: translateY(0%);
   }
 }

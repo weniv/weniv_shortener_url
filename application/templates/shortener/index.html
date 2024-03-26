@@ -147,7 +147,63 @@
       <p>유효하지 않은 URL을 입력하셨습니다. : {{ error }}</p>
       {% endif %}
     </div>
-    <footer>weniv</footer>
+
+    <div class="more_wrap">
+      <p>위니브의 더 많은 서비스를 만나보세요!</p>
+      <a href="https://archive.weniv.co.kr/" target="_blank" class="more">
+        <img src="{% static '/img/weniv.svg' %}" alt="위니브 더 알아보기" />
+      </a>
+    </div>
+
+    <footer class="footer" role="contentinfo">
+      <div class="inner">
+        <div class="weniv-info">
+          <a class="footer-logo" href="/"
+            ><img
+              src="{% static '/img/weniv-link-logo-gray.svg' %}"
+              alt="weniv.link"
+            />
+          </a>
+          <p>Copyright © 2024 WENIV All Rights Reserved</p>
+          <ul>
+            <li>(주)위니브</li>
+            <li>대표: 이호준</li>
+            <li>사업자 번호: 546-86-01737</li>
+            <li>정보통신업</li>
+            <li>주소: 제주 제주시 첨단로 330 세미양빌딩 A동 1층 106호</li>
+          </ul>
+        </div>
+
+        <!-- sns link -->
+        <div class="sns-link">
+          <a
+            class="sns-Btn"
+            href="https://www.inflearn.com/users/170213/@jejucoding"
+            target="_blank"
+            ><img src="{% static '/img/icon-inflearn.svg' %}" alt="인프런" />
+          </a>
+          <a
+            class="sns-Btn"
+            href="https://www.youtube.com/@jejucodingcamp"
+            target="_blank"
+            ><img src="{% static '/img/icon-youtube.svg' %}" alt="유튜브"
+          /></a>
+          <a
+            class="sns-Btn"
+            href="https://blog.naver.com/paul-lab"
+            target="_blank"
+            ><img src="{% static '/img/icon-naver.svg' %}" alt="네이버 블로그"
+          /></a>
+          <a
+            class="sns-Btn"
+            href="https://www.instagram.com/weniv_official/"
+            target="_blank"
+            ><img src="{% static '/img/icon-insta.svg' %}" alt="인스타그램"
+          /></a>
+        </div>
+        <!-- //sns link -->
+      </div>
+    </footer>
 
     <script src="{% static '/js/script.js' %}"></script>
   </body>
