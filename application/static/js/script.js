@@ -54,30 +54,34 @@ const handleClipBoard = async (e) => {
   }
 };
 
-copyBtn.addEventListener("click", handleClipBoard);
+if (copyBtn) {
+  copyBtn.addEventListener("click", handleClipBoard);
+}
 
 // QR
-const qrUrl = document.querySelector(".result span").textContent;
+const qrUrl = document.querySelector(".result span")?.textContent;
 const qrcodeContainer = document.getElementById("qrcode");
 const downloadButton = document.getElementById("downloadButton");
 
-qrcodeContainer.innerHTML = "";
+if (qrUrl) {
+  qrcodeContainer.innerHTML = "";
 
-QRCode.toCanvas(qrUrl, { width: 240 }, function (error, canvas) {
-  if (error) console.error(error);
-  qrcodeContainer.appendChild(canvas);
-});
+  QRCode.toCanvas(qrUrl, { width: 240 }, function (error, canvas) {
+    if (error) console.error(error);
+    qrcodeContainer.appendChild(canvas);
+  });
 
-downloadButton.addEventListener("click", () => {
-  const canvas = qrcodeContainer.querySelector("canvas");
+  downloadButton.addEventListener("click", () => {
+    const canvas = qrcodeContainer.querySelector("canvas");
 
-  if (canvas) {
-    const image = canvas
-      .toDataURL("image/png")
-      .replace("image/png", "image/octet-stream");
-    const link = document.createElement("a");
-    link.download = "qrcode.png";
-    link.href = image;
-    link.click();
-  }
-});
+    if (canvas) {
+      const image = canvas
+        .toDataURL("image/png")
+        .replace("image/png", "image/octet-stream");
+      const link = document.createElement("a");
+      link.download = "qrcode.png";
+      link.href = image;
+      link.click();
+    }
+  });
+}
