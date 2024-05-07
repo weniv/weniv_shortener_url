@@ -60,6 +60,7 @@
           action="{% url 'shortener:index' %}"
           method="post"
           class="url-form"
+          id="urlForm"
         >
           {% csrf_token %}
           <label for="original_url" class="a11y-hidden">URL</label>
@@ -150,8 +151,12 @@
 
     <div class="more_wrap">
       <p>위니브의 더 많은 서비스를 만나보세요!</p>
-      <a href="https://archive.weniv.co.kr/" target="_blank" class="more">
-        <img src="{% static '/img/weniv.svg' %}" alt="위니브 더 알아보기" />
+      <a
+        href="https://archive.weniv.co.kr/"
+        target="_blank"
+        class="more a-click"
+      >
+        <img src="{% static '/img/weniv.svg' %}" alt="위니브 아카이브" />
       </a>
     </div>
 
@@ -177,25 +182,25 @@
         <!-- sns link -->
         <div class="sns-link">
           <a
-            class="sns-Btn"
+            class="sns-Btn a-click"
             href="https://www.inflearn.com/users/170213/@jejucoding"
             target="_blank"
             ><img src="{% static '/img/icon-inflearn.svg' %}" alt="인프런" />
           </a>
           <a
-            class="sns-Btn"
+            class="sns-Btn a-click"
             href="https://www.youtube.com/@jejucodingcamp"
             target="_blank"
             ><img src="{% static '/img/icon-youtube.svg' %}" alt="유튜브"
           /></a>
           <a
-            class="sns-Btn"
+            class="sns-Btn a-click"
             href="https://blog.naver.com/paul-lab"
             target="_blank"
             ><img src="{% static '/img/icon-naver.svg' %}" alt="네이버 블로그"
           /></a>
           <a
-            class="sns-Btn"
+            class="sns-Btn a-click"
             href="https://www.instagram.com/weniv_official/"
             target="_blank"
             ><img src="{% static '/img/icon-insta.svg' %}" alt="인스타그램"

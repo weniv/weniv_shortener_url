@@ -1,49 +1,87 @@
 // 페이지뷰 데이터 전송
-fetch("https://www.analytics.weniv.co.kr/collect/pageview", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({ url: window.location.href }),
-})
-  .then((response) => {
+const this_page_url = window.location.href;
+const session_id = sessionStorage.getItem("session_id");
+
+if (!session_id) {
+  fetch("https://www.analytics.weniv.co.kr/collect/pageview", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ url: this_page_url }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      sessionStorage.setItem("session_id", data.session_id);
+    })
+    .catch((error) => console.error("Error:", error));
+}
+
+// 클릭 데이터 전송
+let targetUrl = "";
+
+const sendAnalyticsClick = async (type, targetUrl = "") => {
+  try {
+    const response = await fetch(
+      "https://www.analytics.weniv.co.kr/collect/anchor-click",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Session-Id": session_id,
+        },
+        body: JSON.stringify({
+          source_url: this_page_url,
+          target_url: targetUrl,
+          type,
+        }),
+      }
+    );
+
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    return response.json();
-  })
-  .then((data) => {
-    sessionStorage.setItem("session_id", data.session_id);
-  })
-  .catch((error) => console.error("Error:", error));
-
-// 앵커 클릭 이벤트 리스너 등록
-document.addEventListener("click", function (event) {
-  const ANCHOR = event.target.closest("a");
-  if (ANCHOR) {
-    event.preventDefault(); // 기본 동작 막기
-    var session_id = sessionStorage.getItem("session_id");
-    const source_url = window.location.href;
-    const target_url = ANCHOR.href;
-    const target_tar = ANCHOR.target || "_self";
-
-    fetch("https://www.analytics.weniv.co.kr/collect/anchor-click", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Session-Id": session_id,
-      },
-      body: JSON.stringify({ source_url, target_url }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        window.open(target_url, target_tar);
-      })
-      .catch((error) => console.error("Error:", error));
+  } catch (error) {
+    console.error("Error:", error);
   }
-});
+};
+
+// URL 입력 후 submit 이벤트
+const urlForm = document.getElementById("urlForm");
+if (urlForm) {
+  urlForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const inputUrl = e.currentTarget.querySelector("#original_url").value;
+    targetUrl = inputUrl;
+    sendAnalyticsClick("단축 URL 생성", inputUrl).then(() => {
+      e.target.submit();
+    });
+  });
+}
+
+// QR 이미지 다운로드 이벤트
+if (downloadButton) {
+  downloadButton.addEventListener("click", () =>
+    sendAnalyticsClick("QR 이미지 다운로드", targetUrl)
+  );
+}
+
+// 다른 URL 이동 이벤트
+const links = document.querySelectorAll(".a-click");
+if (links.length > 0) {
+  links.forEach((link) =>
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const inputUrl = e.currentTarget.href;
+      const text = e.currentTarget.querySelector("img").alt;
+      sendAnalyticsClick(text, inputUrl).then(() => {
+        window.open(inputUrl, "_blank");
+      });
+    })
+  );
+}
