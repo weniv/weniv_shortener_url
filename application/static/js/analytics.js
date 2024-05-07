@@ -23,8 +23,7 @@ if (!session_id) {
 }
 
 // 클릭 데이터 전송
-
-const sendAnalyticsClick = async (type, targetUrl = "") => {
+const sendAnalyticsClick = async (type, targetUrl = "", func) => {
   try {
     const response = await fetch(
       "https://www.analytics.weniv.co.kr/collect/anchor-click",
@@ -41,12 +40,13 @@ const sendAnalyticsClick = async (type, targetUrl = "") => {
         }),
       }
     );
-
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
   } catch (error) {
     console.error("Error:", error);
+  } finally {
+    func();
   }
 };
 
@@ -57,9 +57,10 @@ if (urlForm) {
     e.preventDefault();
     const inputUrl = e.currentTarget.querySelector("#original_url").value;
 
-    sendAnalyticsClick("단축 URL 생성", inputUrl).then(() => {
+    const final = () => {
       e.target.submit();
-    });
+    };
+    sendAnalyticsClick("단축 URL 생성", inputUrl, final);
   });
 }
 
@@ -79,9 +80,10 @@ if (links.length > 0) {
       e.preventDefault();
       const inputUrl = e.currentTarget.href;
       const text = e.currentTarget.querySelector("img").alt;
-      sendAnalyticsClick(text, inputUrl).then(() => {
+      const final = () => {
         window.open(inputUrl, "_blank");
-      });
+      };
+      sendAnalyticsClick(text, inputUrl, final);
     })
   );
 }
