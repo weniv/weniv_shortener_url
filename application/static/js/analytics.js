@@ -46,7 +46,7 @@ const sendAnalyticsClick = async (type, targetUrl = "", func) => {
   } catch (error) {
     console.error("Error:", error);
   } finally {
-    func();
+    func && func();
   }
 };
 
