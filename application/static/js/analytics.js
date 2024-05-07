@@ -23,7 +23,6 @@ if (!session_id) {
 }
 
 // 클릭 데이터 전송
-let targetUrl = "";
 
 const sendAnalyticsClick = async (type, targetUrl = "") => {
   try {
@@ -57,7 +56,7 @@ if (urlForm) {
   urlForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const inputUrl = e.currentTarget.querySelector("#original_url").value;
-    targetUrl = inputUrl;
+
     sendAnalyticsClick("단축 URL 생성", inputUrl).then(() => {
       e.target.submit();
     });
@@ -66,9 +65,10 @@ if (urlForm) {
 
 // QR 이미지 다운로드 이벤트
 if (downloadButton) {
-  downloadButton.addEventListener("click", () =>
-    sendAnalyticsClick("QR 이미지 다운로드", targetUrl)
-  );
+  downloadButton.addEventListener("click", () => {
+    const inputUrl = document.getElementById("originUrl").href;
+    sendAnalyticsClick("QR 이미지 다운로드", inputUrl);
+  });
 }
 
 // 다른 URL 이동 이벤트
