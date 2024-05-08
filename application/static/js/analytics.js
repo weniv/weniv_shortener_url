@@ -1,6 +1,6 @@
 // 페이지뷰 데이터 전송
 const this_page_url = window.location.href;
-const session_id = sessionStorage.getItem("session_id");
+let session_id = sessionStorage.getItem("session_id");
 
 if (!session_id) {
   fetch("https://www.analytics.weniv.co.kr/collect/pageview", {
@@ -18,6 +18,7 @@ if (!session_id) {
     })
     .then((data) => {
       sessionStorage.setItem("session_id", data.session_id);
+      session_id = data.session_id;
     })
     .catch((error) => console.error("Error:", error));
 }
