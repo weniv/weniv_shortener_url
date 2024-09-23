@@ -55,7 +55,7 @@
 
       {% if not shorten_url %}
       <section class="url-section">
-        <h2 class="section-title">URL을 입력해주세요</h2>
+        <h2 class="section-title">단축할 URL을 입력해주세요 6글자 (대,소문자, 숫자만 가능)</h2>
         <form
           action="{% url 'shortener:index' %}"
           method="post"

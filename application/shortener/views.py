@@ -121,7 +121,8 @@ def generate_staff_url(original_url):
 def staff_index(request):
     if request.method == 'POST':
         original_url = request.POST.get('original_url')
-        if not is_valid_url(original_url):
+        ## URL이 http:// 또는 https://로 시작하는지 확인, 길이가 6인지 확인, 대소문자, 숫자만 적용되었는지 확인
+        if "http" in original_url or "https" in original_url or len(original_url) != 6 or not original_url.isalnum():
             return render(request, 'shortener/staff.html', {'error': 'Invalid URL'})
         context = generate_staff_url(original_url)
         return render(request, 'shortener/staff.html', context)
