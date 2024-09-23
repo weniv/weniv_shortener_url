@@ -8,7 +8,8 @@
     <link rel="icon" href="{% static 'favicon.ico' %}" />
     <link rel="stylesheet" href="{% static '/css/style.css' %}" />
     <link rel="stylesheet" href="{% static '/css/staff.css' %}" />
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <link rel="canonical" href="https://weniv.link" />
     <meta
@@ -33,6 +34,8 @@
     <meta name="twitter:image" content="{% static '/img/OG.png' %}" />
   </head>
   <body>
+    <script src="{% static '/js/staff.js' %}"></script>
+
     <div class="wrap">
       <header>
         <h1>
@@ -87,6 +90,7 @@
             <span class="a11y-hidden">복사</span>
           </button>
         </p>
+        <!--
         <div class="qrcode_wrap">
           <h2 class="section-title">QR Code</h2>
           <div class="qr_wrap">
@@ -96,7 +100,7 @@
             </button>
           </div>
         </div>
-
+        -->
         <div class="bottom">
           <p class="origin-url">
             <span>[Original URL]</span>

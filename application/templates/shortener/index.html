@@ -8,6 +8,7 @@
     <link rel="icon" href="{% static 'favicon.ico' %}" />
     <link rel="stylesheet" href="{% static '/css/style.css' %}" />
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <link rel="canonical" href="https://weniv.link" />
     <meta
@@ -49,7 +50,7 @@
           <img src="{% static '/img/4_harry.svg' %}" alt="" />
           <img src="{% static '/img/5_woongi.svg' %}" alt="" />
           <img src="{% static '/img/6_ali.svg' %}" alt="" />
-          <a href="/staff/shorten_url">
+          <a href="/staff/shorten_url" id="staffLink">
             <img src="{% static '/img/7_python.svg' %}" alt="" />
           </a>
         </p>
