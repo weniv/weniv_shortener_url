@@ -107,23 +107,31 @@ def is_valid_url(url) -> bool:
         return False
 
 
-def generate_staff_url(original_url):
-    shorten_url_with_protocol = f"https://{BASE_NAME}/{original_url}"
+def generate_staff_url(original_url, url_name):
+    shorten_url_with_protocol = f"https://{BASE_NAME}/{url_name}"
     if not ShortenURL.objects.filter(shorten_url=shorten_url_with_protocol).exists():
         ShortenURL.objects.create(
-            original_url=shorten_url_with_protocol,
+            original_url=original_url,
             shorten_url=shorten_url_with_protocol
         )
+    shorten_url_obj = ShortenURL.objects.get(shorten_url=shorten_url_with_protocol)
+    context = {
+        'original_url': original_url,
+        'shorten_url': shorten_url_with_protocol,
+        'created_at': shorten_url_obj.created_at,
+        'shorten_url_code': url_name
+    }
 
-    return shorten_url_with_protocol
+    return context
 
 
 def staff_index(request):
     if request.method == 'POST':
         original_url = request.POST.get('original_url')
-        ## URL이 http:// 또는 https://로 시작하는지 확인, 길이가 6인지 확인, 대소문자, 숫자만 적용되었는지 확인
-        if "http" in original_url or "https" in original_url or not original_url.isalnum():
+        url_name = request.POST.get('url_name')
+        ## URL이 http:// 또는 https://로 시작하는지 확인, 대소문자, 숫자만 적용되었는지 확인
+        if "http" not in original_url or "https" not in original_url or not url_name.isalnum():
             return render(request, 'shortener/staff.html', {'error': 'Invalid URL'})
-        context = generate_staff_url(original_url)
-        return render(request, 'shortener/index.html')
+        context = generate_staff_url(original_url, url_name)
+        return render(request, 'shortener/staff.html', context)
     return render(request, 'shortener/staff.html')
