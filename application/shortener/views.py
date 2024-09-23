@@ -111,7 +111,7 @@ def generate_staff_url(original_url):
     shorten_url_with_protocol = f"https://{BASE_NAME}/{original_url}"
     if not ShortenURL.objects.filter(shorten_url=shorten_url_with_protocol).exists():
         ShortenURL.objects.create(
-            original_url=original_url,
+            original_url=shorten_url_with_protocol,
             shorten_url=shorten_url_with_protocol
         )
 
