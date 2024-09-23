@@ -3,7 +3,7 @@ from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_http_methods
 from django_ratelimit.decorators import ratelimit
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponsePermanentRedirect
 from .models import ShortenURL
 import hashlib
 import base64
@@ -89,7 +89,12 @@ def redirect_original_url(request, shorten_url_code):
     if not original_url:
         # 적절한 에러 페이지나 홈페이지로 리다이렉트
         return redirect('/')
-    return redirect(original_url)
+
+    response = HttpResponsePermanentRedirect(original_url)
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    return response
 
 
 def fetch_and_cache_original_url(shorten_url):
