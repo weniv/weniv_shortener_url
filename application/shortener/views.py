@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.core.cache import cache
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST, require_http_methods
 from django_ratelimit.decorators import ratelimit
 from django.http import JsonResponse
 from .models import ShortenURL
@@ -8,6 +10,7 @@ import base64
 from django.conf import settings
 from urllib.parse import urlparse
 import re
+import json
 
 BASE_NAME = settings.BASE_NAME
 
@@ -155,13 +158,32 @@ def staff_index(request):
     return render(request, 'shortener/staff.html')
 
 
+@csrf_exempt
+@require_http_methods(['POST'])
 def api_generate_shorten_url(request):
-    parsing_url = request.build_absolute_uri()
+    try:
+        data = json.loads(request.body)
+        original_url = data.get('url')
 
-    shorten_url = f"https://{BASE_NAME}/{generate_shorten_url(parsing_url)}"
-    if not ShortenURL.objects.filter(shorten_url=shorten_url).exists():
-        ShortenURL.objects.create(
-            original_url=parsing_url,
-            shorten_url=shorten_url
-        )
-    return JsonResponse({'shorten_url': shorten_url})
+        if not original_url:
+            return JsonResponse({'error': 'URL is required'}, status=400)
+
+        if not is_valid_url(original_url):
+            return JsonResponse({'error': 'Invalid URL'}, status=400)
+
+        shorten_url_code = generate_shorten_url(original_url)
+        shorten_url = f"https://{BASE_NAME}/{shorten_url_code}"
+
+        if ShortenURL.objects.filter(shorten_url=shorten_url).exists():
+            return JsonResponse(JsonResponse({'shorten_url': shorten_url}))
+        else:
+            ShortenURL.objects.create(
+                original_url=original_url,
+                shorten_url=shorten_url
+            )
+
+        return JsonResponse({'shorten_url': shorten_url})
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
