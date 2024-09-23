@@ -145,7 +145,7 @@ def staff_index(request):
         if not is_valid_url(original_url):
             return render(request, 'shortener/staff.html', {'error': 'Invalid URL format'})
 
-        if not re.match(r'^[a-zA-Z0-9]+$', url_name):
+        if not re.match(r'^[a-zA-Z0-9-]+$', url_name):
             return render(request, 'shortener/staff.html',
                           {'error': 'Invalid URL name. Use only alphanumeric characters.'})
 
