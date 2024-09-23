@@ -125,5 +125,5 @@ def staff_index(request):
         if "http" in original_url or "https" in original_url or len(original_url) != 6 or not original_url.isalnum():
             return render(request, 'shortener/staff.html', {'error': 'Invalid URL'})
         context = generate_staff_url(original_url)
-        return render(request, 'shortener/staff.html', context)
+        return render(request, 'shortener/index.html', context)
     return render(request, 'shortener/staff.html')
