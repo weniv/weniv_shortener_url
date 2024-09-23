@@ -13,26 +13,6 @@ from urllib.parse import urlparse
 BASE_NAME = settings.BASE_NAME
 
 
-# def get_client_ip(request):
-#     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-#     if x_forwarded_for:
-#         ip = x_forwarded_for.split(',')[0]
-#     else:
-#         ip = request.META.get('REMOTE_ADDR')
-#     return ip
-#
-#
-# def log_access(request):
-#     if request.META.get('HTTP_X_FORWARDED_FOR'):
-#         ip_address = request.META.get('HTTP_X_FORWARDED_FOR').split(',')[0]
-#     ip_address = get_client_ip(request)
-#     access_date = datetime.date.today()
-#     if ip_address == "127.0.0.1":
-#         return
-#     # 동일한 IP에서의 중복 접속 방지
-#     AccessLog.objects.get_or_create(ip_address=ip_address, access_date=access_date)
-
-
 @ratelimit(key='ip', rate='8/m', block=False)
 def index(request):
     was_limit_exceeded = getattr(request, 'limited', False)
@@ -125,3 +105,13 @@ def is_valid_url(url) -> bool:
         return all([result.scheme, result.netloc])
     except ValueError:
         return False
+
+
+def staff_index(request):
+    if request.method == 'POST':
+        original_url = request.POST.get('original_url')
+        if not is_valid_url(original_url):
+            return render(request, 'shortener/staff.html', {'error': 'Invalid URL'})
+        context = manage_url(original_url)
+        return render(request, 'shortener/staff.html', context)
+    return render(request, 'shortener/staff.html')
