@@ -1,14 +1,13 @@
-import datetime
-
 from django.shortcuts import render, redirect
 from django.core.cache import cache
 from django_ratelimit.decorators import ratelimit
 from django.http import JsonResponse
-from .models import ShortenURL, AccessLog
+from .models import ShortenURL
 import hashlib
 import base64
 from django.conf import settings
 from urllib.parse import urlparse
+import re
 
 BASE_NAME = settings.BASE_NAME
 
@@ -76,7 +75,7 @@ def generate_shorten_url(original_url: str) -> str:
     raise ValueError("Failed to generate a unique shorten URL after multiple attempts")
 
 
-@ratelimit(key='ip', rate='8/m', block=False)
+@ratelimit(key='ip', rate='30/m', block=False)
 def redirect_original_url(request, shorten_url_code):
     was_limit_exceeded = getattr(request, 'limited', False)
     if was_limit_exceeded:
@@ -109,11 +108,17 @@ def is_valid_url(url) -> bool:
 
 def generate_staff_url(original_url, url_name):
     shorten_url_with_protocol = f"https://{BASE_NAME}/{url_name}"
-    if not ShortenURL.objects.filter(shorten_url=shorten_url_with_protocol).exists():
+    existing_url = ShortenURL.objects.filter(shorten_url=shorten_url_with_protocol).first()
+
+    if existing_url:
+        if existing_url.original_url != original_url:
+            return {'error': 'This short name is already in use for a different URL.'}
+    else:
         ShortenURL.objects.create(
             original_url=original_url,
             shorten_url=shorten_url_with_protocol
         )
+
     shorten_url_obj = ShortenURL.objects.get(shorten_url=shorten_url_with_protocol)
     context = {
         'original_url': original_url,
@@ -129,9 +134,34 @@ def staff_index(request):
     if request.method == 'POST':
         original_url = request.POST.get('original_url')
         url_name = request.POST.get('url_name')
+
+        if not is_valid_url(original_url):
+            return render(request, 'shortener/staff.html', {'error': 'Invalid URL format'})
+
+        if not re.match(r'^[a-zA-Z0-9]+$', url_name):
+            return render(request, 'shortener/staff.html',
+                          {'error': 'Invalid URL name. Use only alphanumeric characters.'})
+
         ## URL이 http:// 또는 https://로 시작하는지 확인, 대소문자, 숫자만 적용되었는지 확인
-        if "http" not in original_url or "https" not in original_url or not url_name.isalnum():
-            return render(request, 'shortener/staff.html', {'error': 'Invalid URL'})
+        if "http" not in original_url or "https" not in original_url:
+            return render(request, 'shortener/staff.html', {'error': 'URL must start with http:// or https://'})
+
         context = generate_staff_url(original_url, url_name)
+
+        if 'error' in context:
+            return render(request, 'shortener/staff.html', {'error': context['error']})
+
         return render(request, 'shortener/staff.html', context)
     return render(request, 'shortener/staff.html')
+
+
+def api_generate_shorten_url(request):
+    parsing_url = request.build_absolute_uri()
+
+    shorten_url = f"https://{BASE_NAME}/{generate_shorten_url(parsing_url)}"
+    if not ShortenURL.objects.filter(shorten_url=shorten_url).exists():
+        ShortenURL.objects.create(
+            original_url=parsing_url,
+            shorten_url=shorten_url
+        )
+    return JsonResponse({'shorten_url': shorten_url})
