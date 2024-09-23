@@ -38,7 +38,7 @@ DEBUG = True if env('MODE') == 'dev' else True
 
 ALLOWED_HOSTS = ["*"] if env('MODE') == 'dev' else [env('HOST')]
 
-APPEND_SLASH = False
+# APPEND_SLASH = False
 
 # Application definition
 
