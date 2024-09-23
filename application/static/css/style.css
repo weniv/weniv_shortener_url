@@ -221,17 +221,20 @@ h1 img {
   justify-content: center;
   gap: 1em;
 }
-.short-friends img {
+.short-friends > * {
   transform-origin: 50% 100%;
   max-width: 10%;
   max-height: 6rem;
   aspect-ratio: 254/280;
 }
-.short-friends img:nth-child(2n) {
+.short-friends > *:nth-child(2n) {
   animation: shorten 1s cubic-bezier(1, 0, 0, 5) infinite alternate both;
 }
-.short-friends img:nth-child(2n+1) {
+.short-friends > *:nth-child(2n+1) {
   animation: shorten 1s cubic-bezier(1, 0, 0, 5) infinite reverse both;
+}
+.short-friends a img {
+  max-width: 100%;
 }
 
 @keyframes shorten {

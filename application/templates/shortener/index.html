@@ -49,7 +49,9 @@
           <img src="{% static '/img/4_harry.svg' %}" alt="" />
           <img src="{% static '/img/5_woongi.svg' %}" alt="" />
           <img src="{% static '/img/6_ali.svg' %}" alt="" />
-          <img src="{% static '/img/7_python.svg' %}" alt="" />
+          <a href="/staff/shorten_url">
+            <img src="{% static '/img/7_python.svg' %}" alt="" />
+          </a>
         </p>
       </header>
 
@@ -127,21 +129,22 @@
         <div class="bottom">
           <p class="origin-url">
             <span>[Original URL]</span>
-            <a href="{{ original_url }}" target="_blank" id="originUrl"
-              >{{ original_url }}</a
-            >
+            <a href="{{ original_url }}" target="_blank" id="originUrl">
+              {{ original_url }}
+            </a>
           </p>
 
           <p class="btn-group">
             <a
               href="{% url 'shortener:redirect_original_url' shorten_url_code %}"
               target="_blank"
-              >바로가기</a
             >
+              바로가기
+            </a>
             <a href="/" class="btn-back">
               <img src="{% static '/img/back.svg' %}" alt="" />
-              이전</a
-            >
+              이전
+            </a>
           </p>
         </div>
       </section>
@@ -165,8 +168,8 @@
     <footer class="footer" role="contentinfo">
       <div class="inner">
         <div class="weniv-info">
-          <a class="footer-logo" href="/"
-            ><img
+          <a class="footer-logo" href="/">
+            <img
               src="{% static '/img/weniv-link-logo-gray.svg' %}"
               alt="weniv.link"
             />
@@ -187,26 +190,30 @@
             class="sns-Btn a-click"
             href="https://www.inflearn.com/users/170213/@jejucoding"
             target="_blank"
-            ><img src="{% static '/img/icon-inflearn.svg' %}" alt="인프런" />
+          >
+            <img src="{% static '/img/icon-inflearn.svg' %}" alt="인프런" />
           </a>
           <a
             class="sns-Btn a-click"
             href="https://www.youtube.com/@jejucodingcamp"
             target="_blank"
-            ><img src="{% static '/img/icon-youtube.svg' %}" alt="유튜브"
-          /></a>
+          >
+            <img src="{% static '/img/icon-youtube.svg' %}" alt="유튜브" />
+          </a>
           <a
             class="sns-Btn a-click"
             href="https://blog.naver.com/paul-lab"
             target="_blank"
-            ><img src="{% static '/img/icon-naver.svg' %}" alt="네이버 블로그"
-          /></a>
+          >
+            <img src="{% static '/img/icon-naver.svg' %}" alt="네이버 블로그" />
+          </a>
           <a
             class="sns-Btn a-click"
             href="https://www.instagram.com/weniv_official/"
             target="_blank"
-            ><img src="{% static '/img/icon-insta.svg' %}" alt="인스타그램"
-          /></a>
+          >
+            <img src="{% static '/img/icon-insta.svg' %}" alt="인스타그램" />
+          </a>
         </div>
         <!-- //sns link -->
       </div>

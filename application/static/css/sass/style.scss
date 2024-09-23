@@ -247,7 +247,7 @@ h1 {
   justify-content: center;
   gap: 1em;
 
-  img {
+  > * {
     transform-origin: 50% 100%;
     max-width: 10%;
     max-height: 6rem;
@@ -259,6 +259,10 @@ h1 {
     &:nth-child(2n + 1) {
       animation: shorten 1s cubic-bezier(1, 0, 0, 5) infinite reverse both;
     }
+  }
+
+  a img {
+    max-width: 100%;
   }
 }
 

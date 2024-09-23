@@ -1,0 +1,62 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+
+// color
+$primary: #2e6ff2;
+$primaryA11y: #2861d3;
+$background: #fff;
+$surface: #121314;
+$grayLv1: #f3f5fa;
+$grayLv2: #d9dbe0;
+$grayLv3: #8d9299;
+$grayLv4: #47494d;
+$error: #ff3440;
+$warn: #ffc533;
+$activation: #dee8ff;
+
+$maxW: 1000;
+@function fcSize($min, $max) {
+  @return clamp($min * 0.1rem, (100vw / $maxW) * $max, $max * 0.1rem);
+}
+
+.staff-url-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  box-sizing: border-box;
+  border-radius: 1rem;
+  font-size: 1.2em;
+  gap: 0.5em;
+
+  label {
+    font-size: 0.85em;
+    font-weight: 400;
+    padding-left: 0.5em;
+    width: fit-content;
+    color: $grayLv3;
+  }
+  input {
+    box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.04);
+    background-color: $background;
+    box-sizing: border-box;
+    max-width: 100%;
+    height: 4.8rem;
+    flex: 1 1 0;
+    outline: none;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    width: 100%;
+
+    &::placeholder {
+      color: $grayLv3;
+      padding-left: 0.3em;
+    }
+  }
+
+  .url-form__button {
+    background-color: $primary;
+    color: $background;
+    width: 100%;
+    margin-top: 0.5em;
+  }
+}
