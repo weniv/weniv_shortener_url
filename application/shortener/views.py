@@ -84,20 +84,19 @@ def redirect_original_url(request, shorten_url_code):
     if was_limit_exceeded:
         return JsonResponse({'error': 'Rate limit exceeded'}, status=429)
 
+    # URL 끝의 슬래시 제거
+    shorten_url_code = shorten_url_code.rstrip('/') if shorten_url_code.endswith('/') else shorten_url_code
+
     shorten_url = f"https://{BASE_NAME}/{shorten_url_code}"
     original_url = cache.get(shorten_url) or fetch_and_cache_original_url(shorten_url)
     if not original_url:
         # 적절한 에러 페이지나 홈페이지로 리다이렉트
         return redirect('/')
-
-    response = HttpResponsePermanentRedirect(original_url)
-    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response['Pragma'] = 'no-cache'
-    response['Expires'] = '0'
-    return response
+    return redirect(original_url)
 
 
 def fetch_and_cache_original_url(shorten_url):
+    shorten_url = shorten_url.rstrip('/') if shorten_url.endswith('/') else shorten_url
     try:
         original_url_obj = ShortenURL.objects.get(shorten_url=shorten_url)
         cache.set(shorten_url, original_url_obj.original_url, timeout=86400)  # 예를 들어, 1일 동안 캐시
