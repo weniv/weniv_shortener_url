@@ -453,24 +453,15 @@ body .wrap {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3.2rem;
-  height: 3.2rem;
-  border: 1px solid #d9dbe0;
-  border-radius: 0.8rem;
+  width: 3.6rem;
+  height: 3.6rem;
+  background-color: #8d9299;
+  border-radius: 3.2rem;
   transition: all 0.3s;
 }
-.footer .sns-link a img {
-  filter: grayscale(100%);
-  opacity: 0.8;
-}
 @media (hover: hover) {
-  .footer .sns-link a:hover {
-    border-color: rgba(46, 111, 242, 0.5);
-    background-color: rgba(46, 111, 242, 0.05);
-  }
-  .footer .sns-link a:hover img {
-    filter: grayscale(0);
-    opacity: 1;
+  .footer .sns-link a:hover .sns-target {
+    fill: #fff;
   }
 }
 
@@ -528,4 +519,4 @@ body .wrap {
   100% {
     transform: translateY(0%);
   }
-}
+}/*# sourceMappingURL=style.css.map */

@@ -497,23 +497,15 @@ body {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 3.2rem;
-      height: 3.2rem;
-      border: 1px solid $grayLv2;
-      border-radius: 0.8rem;
+      width: 3.6rem;
+      height: 3.6rem;
+      background-color: $grayLv3;
+      border-radius: 3.2rem;
       transition: all 0.3s;
-      img {
-        filter: grayscale(100%);
-        opacity: 0.8;
-      }
-
       @media (hover: hover) {
         &:hover {
-          border-color: rgba($primary, 0.5);
-          background-color: rgba($primary, 0.05);
-          img {
-            filter: grayscale(0);
-            opacity: 1;
+          .sns-target {
+            fill: $background;
           }
         }
       }
