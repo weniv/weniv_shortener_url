@@ -3,7 +3,7 @@ const this_page_url = window.location.href;
 let session_id = localStorage.getItem("session_id");
 
 if (!session_id) {
-  fetch("https://www.analytics.weniv.co.kr/collect/pageview", {
+  fetch("https://dev.wenivops.co.kr/api/weniv_analytics/collect/pageview", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -27,7 +27,7 @@ if (!session_id) {
 const sendAnalyticsClick = async (type, targetUrl = "", func) => {
   try {
     const response = await fetch(
-      "https://www.analytics.weniv.co.kr/collect/anchor-click",
+      "https://dev.wenivops.co.kr/api/weniv_analytics/collect/anchor-click",
       {
         method: "POST",
         headers: {
