@@ -23,7 +23,7 @@ services:
       - "traefik.http.routers.shortener-dev.tls.certresolver=myresolver"
       - "traefik.http.middlewares.shortener-dev-stripprefix.stripprefix.prefixes=/services/shortener"
       - "traefik.http.routers.shortener-dev.middlewares=shortener-dev-stripprefix"
-      - "traefik.http.services.shortener-dev.loadbalancer.server.port=8000"
+      - "traefik.http.services.shortener-dev.loadbalancer.server.port=9103"
       
 #      # weniv.link 엔드포인트 설정
 #      - "traefik.http.routers.shortener-live.rule=Host(`weniv.link`)"

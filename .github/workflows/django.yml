@@ -29,4 +29,4 @@ jobs:
           
           # 배포 결과 확인
           echo "Deployment completed at $(date)"
-          docker-compose ps
+          docker compose ps
