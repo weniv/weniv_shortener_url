@@ -177,3 +177,4 @@ BASE_NAME = "weniv.link"
 # CELERY_RESULT_SERIALIZER = 'json'
 # CELERY_TASK_SERIALIZER = 'json'
 # CELERY_TIMEZONE = 'Asia/Seoul'
+CSRF_TRUSTED_ORIGINS = ['https://weniv.link', 'https://dev.wenivops.co.kr']
