@@ -11,30 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.11'
-
-      # 도커 허브 로그인
-    - name: Login to DockerHub
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-   # 도커 이미지 빌드 및 푸시
-    - name: Build and push Docker image
-      if: github.event_name != 'pull_request'
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true
-        tags: |
-          weniv/weniv-shortener:latest
-          weniv/weniv-shortener:${{ github.sha }}
 
     # 서버에 SSH로 접속하여 배포
     - name: Deploy to Dev Server
@@ -46,8 +22,10 @@ jobs:
         password: ${{ secrets.SERVER_PASSWORD }}
         script: |
           cd ~/projects/weniv-shortener
-          docker compose pull
-          docker compose up -d
+          git pull
+          docker-compose down
+          docker-compose build
+          docker-compose up -d
           
           # 배포 결과 확인
           echo "Deployment completed at $(date)"
