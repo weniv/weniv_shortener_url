@@ -169,7 +169,7 @@ CACHES = {
 
 RATELIMIT_IP_META_KEY = 'HTTP_X_FORWARDED_FOR' if env('MODE') != 'dev' else 'REMOTE_ADDR'
 # DISCORD_MAU_WEB_HOOK = env('DISCORD_MAU_WEB_HOOK')
-BASE_NAME = "weniv.link"
+BASE_NAME = env('BASE_NAME', default="weniv.link")
 #
 # CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
 # CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
