@@ -21,7 +21,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SERVER_PASSWORD }}
         script: |
-          cd ~/projects/weniv-shortener
+          cd ~/projects/weniv_shortener_url
           git pull
           docker-compose down
           docker-compose build
