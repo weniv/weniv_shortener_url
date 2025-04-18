@@ -49,10 +49,17 @@ services:
       - "traefik.docker.network=traefik-network"
       
       # 정적 파일 서빙 설정
-      - "traefik.http.routers.shortener-static.rule=Host(`weniv.link`) && PathPrefix(`/static/`)"
-      - "traefik.http.routers.shortener-static.entrypoints=websecure"
-      - "traefik.http.routers.shortener-static.tls=true"
-      - "traefik.http.services.shortener-static.loadbalancer.server.port=80"
+#      - "traefik.http.routers.shortener-static.rule=Host(`weniv.link`) && PathPrefix(`/static/`)"
+#      - "traefik.http.routers.shortener-static.entrypoints=websecure"
+#      - "traefik.http.routers.shortener-static.tls=true"
+#      - "traefik.http.services.shortener-static.loadbalancer.server.port=80"
+
+      - "traefik.http.routers.shortener-static-dev.rule=Host(`dev.wenivops.co.kr`) && PathPrefix(`/services/shortener/static/`)"
+      - "traefik.http.routers.shortener-static-dev.entrypoints=websecure"
+      - "traefik.http.routers.shortener-static-dev.tls=true"
+      - "traefik.http.routers.shortener-static-dev.middlewares=shortener-static-dev-stripprefix"
+      - "traefik.http.middlewares.shortener-static-dev-stripprefix.stripprefix.prefixes=/services/shortener"
+      - "traefik.http.services.shortener-static-dev.loadbalancer.server.port=80"
 
 volumes:
   static_volume:
