@@ -46,8 +46,8 @@ jobs:
         password: ${{ secrets.SERVER_PASSWORD }}
         script: |
           cd ~/projects/weniv-shortener
-          docker-compose pull
-          docker-compose up -d
+          docker compose pull
+          docker compose up -d
           
           # 배포 결과 확인
           echo "Deployment completed at $(date)"
