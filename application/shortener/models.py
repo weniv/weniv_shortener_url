@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -25,6 +24,7 @@ class AccessLog(models.Model):
 
     class Meta:
         unique_together = ('ip_address', 'access_date')  # IP와 날짜 조합으로 유니크 설정
+        db_table = 'shortener_access_log'
 
     def __str__(self):
         return f"{self.ip_address} - {self.access_date}"

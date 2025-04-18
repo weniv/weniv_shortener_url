@@ -10,13 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
+from celery import Celery
 from django.conf import settings
 from environ import Env
-import os
-from celery import Celery
-from celery.schedules import crontab
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 app = Celery('application')
@@ -36,7 +36,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if env('MODE') == 'dev' else True
 
-ALLOWED_HOSTS = ["*"] if env('MODE') == 'dev' else [env('HOST')]
+ALLOWED_HOSTS = ["*"] if env('MODE') == 'dev' else [env('HOST'), 'dev.wenivops.co.kr']
 
 # APPEND_SLASH = False
 
@@ -133,7 +133,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'  # 기본 URL은 그대로 유지
+
+if env('MODE') != 'dev':
+    # 운영 환경에서 /services/shortener/ 경로로 서비스됨
+    FORCE_SCRIPT_NAME = '/services/shortener'
+    STATIC_URL = '/services/shortener/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
@@ -145,8 +150,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Redis Cache 설정 부분 수정
+REDIS_PREFIX = os.environ.get('REDIS_PREFIX', 'shortener:')
 
-# Redis Cache
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -154,9 +160,11 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "PASSWORD": env('REDIS_PASSWORD'),
+            "KEY_PREFIX": REDIS_PREFIX,  # 키 접두어 설정
         }
     }
 }
+
 
 
 RATELIMIT_IP_META_KEY = 'HTTP_X_FORWARDED_FOR' if env('MODE') != 'dev' else 'REMOTE_ADDR'
