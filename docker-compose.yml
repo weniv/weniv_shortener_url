@@ -51,7 +51,6 @@ services:
       # 정적 파일 서빙 설정
       - "traefik.http.routers.shortener-static.rule=Host(`weniv.link`) && PathPrefix(`/static/`)"
       - "traefik.http.routers.shortener-static.entrypoints=websecure"
-      -
       - "traefik.http.routers.shortener-static.tls=true"
       - "traefik.http.services.shortener-static.loadbalancer.server.port=80"
 
