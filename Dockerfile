@@ -15,10 +15,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 애플리케이션 코드 복사
 COPY application/ .
 
-# 정적 파일 수집
-RUN python manage.py collectstatic --noinput
+## 정적 파일 수집
+#RUN python manage.py collectstatic --noinput
 
 EXPOSE 9103
 
 # 컨테이너가 시작될 때 실행할 명령
-CMD ["gunicorn", "--bind", "0.0.0.0:9103", "--workers", "1", "application.wsgi:application"]
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:9103 --workers 1 application.wsgi:application"]
