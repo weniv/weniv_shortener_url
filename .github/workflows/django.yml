@@ -23,9 +23,9 @@ jobs:
         script: |
           cd ~/projects/weniv_shortener_url
           git pull
-          docker-compose down
-          docker-compose build
-          docker-compose up -d
+          docker compose down
+          docker compose build
+          docker compose up -d
           
           # 배포 결과 확인
           echo "Deployment completed at $(date)"
