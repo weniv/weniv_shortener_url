@@ -137,8 +137,8 @@ STATIC_URL = '/static/'  # 기본 URL은 그대로 유지
 
 if env('MODE') != 'dev':
     # 운영 환경에서 /services/shortener/ 경로로 서비스됨
-    FORCE_SCRIPT_NAME = '/services/shortener'
-    STATIC_URL = '/services/shortener/static/'
+    FORCE_SCRIPT_NAME = '/'
+    STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
