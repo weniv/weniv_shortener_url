@@ -30,8 +30,8 @@ services:
       - "traefik.http.routers.shortener-live.entrypoints=websecure"
       - "traefik.http.routers.shortener-live.tls=true"
       - "traefik.http.routers.shortener-live.tls.certresolver=myresolver"
-      - "traefik.http.middlewares.shortener-live-stripprefix.stripprefix.prefixes=/"
-      - "traefik.http.routers.shortener-live.middlewares=shortener-live-stripprefix"
+#      - "traefik.http.middlewares.shortener-live-stripprefix.stripprefix.prefixes=/"
+#      - "traefik.http.routers.shortener-live.middlewares=shortener-live-stripprefix"
       - "traefik.http.services.shortener-live.loadbalancer.server.port=9103"
 
   shortener_nginx:
@@ -55,8 +55,8 @@ services:
       - "traefik.http.routers.shortener-static.entrypoints=websecure"
       - "traefik.http.routers.shortener-static.tls=true"
       - "traefik.http.routers.shortener-static.tls.certresolver=myresolver"
+      - "traefik.http.middlewares.shortener-static-stripprefix.stripprefix.prefixes=/static/"
       - "traefik.http.routers.shortener-static.middlewares=shortener-static-stripprefix"
-      - "traefik.http.middlewares.shortener-static-stripprefix.stripprefix.prefixes=/static"
       - "traefik.http.services.shortener-static.loadbalancer.server.port=80"
 
 #      - "traefik.http.routers.shortener-static-dev.rule=Host(`dev.wenivops.co.kr`) && PathPrefix(`/services/shortener/static/`)"
