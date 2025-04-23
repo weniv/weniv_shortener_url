@@ -97,6 +97,10 @@ DATABASES = {
         'PASSWORD': env('DB_PASSWORD'),
         'HOST': env('DB_HOST'),
         'PORT': env('DB_PORT'),
+        # korean time
+        'OPTIONS': {
+            'options': '-c timezone=Asia/Seoul'
+        }
 
     }
 }
