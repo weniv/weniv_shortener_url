@@ -11,6 +11,8 @@ services:
       - traefik-network
       - main-redis-network
       - postgres-network
+    environment:
+      - TZ=Asia/Seoul
     labels:
       # 공통 Traefik 설정
       - "traefik.enable=true"
