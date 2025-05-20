@@ -4,8 +4,8 @@ from django.db import models
 # Create your models here.
 
 class ShortenURL(models.Model):
-    original_url = models.URLField(max_length=200)
-    shorten_url = models.CharField(max_length=200, unique=True)
+    original_url = models.URLField(max_length=2000)  # 일반적인 URL 최대 길이
+    shorten_url = models.CharField(max_length=500, unique=True)  # 단축 URL도 여유 있게
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
