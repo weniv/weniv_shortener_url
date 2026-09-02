@@ -8,6 +8,13 @@ class ShortenURL(models.Model):
     shorten_url = models.CharField(max_length=500, unique=True)  # 단축 URL도 여유 있게
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        # 캐시 무효화(signals.py)에서 변경 전 키를 알 수 있도록 원래 값을 보관한다.
+        instance = super().from_db(db, field_names, values)
+        instance._loaded_shorten_url = instance.shorten_url
+        return instance
+
     def __str__(self):
         return self.original_url + ' -> ' + self.shorten_url
 
