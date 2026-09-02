@@ -5,6 +5,7 @@ from django.views.decorators.http import require_POST, require_http_methods
 from django_ratelimit.decorators import ratelimit
 from django.http import JsonResponse, HttpResponsePermanentRedirect
 from .models import ShortenURL
+from .blocklist import check_url as check_blocked_url
 import hashlib
 import base64
 from django.conf import settings
@@ -25,6 +26,9 @@ def index(request):
         original_url = request.POST.get('original_url')
         if not is_valid_url(original_url):
             return render(request, 'shortener/index.html', {'error': 'Invalid URL'})
+        blocked_reason = check_blocked_url(original_url)
+        if blocked_reason:
+            return render(request, 'shortener/index.html', {'error': blocked_reason})
         # log_access(request)
         context = manage_url(original_url)
         return render(request, 'shortener/index.html', context)
@@ -92,6 +96,10 @@ def redirect_original_url(request, shorten_url_code):
     if not original_url:
         # 적절한 에러 페이지나 홈페이지로 리다이렉트
         return redirect('/')
+    if check_blocked_url(original_url, include_self=False):
+        # 차단 목록에 추가되기 전에 저장된 URL 도 연결되지 않도록 한다.
+        # 자기 도메인은 기존 체인이 끊기지 않도록 생성 단계에서만 막는다.
+        return redirect('/')
     return redirect(original_url)
 
 
@@ -153,6 +161,10 @@ def staff_index(request):
         if "http" not in original_url or "https" not in original_url:
             return render(request, 'shortener/staff.html', {'error': 'URL must start with http:// or https://'})
 
+        blocked_reason = check_blocked_url(original_url)
+        if blocked_reason:
+            return render(request, 'shortener/staff.html', {'error': blocked_reason})
+
         context = generate_staff_url(original_url, url_name)
 
         if 'error' in context:
@@ -174,6 +186,10 @@ def api_generate_shorten_url(request):
 
         if not is_valid_url(original_url):
             return JsonResponse({'error': 'Invalid URL'}, status=400)
+
+        blocked_reason = check_blocked_url(original_url)
+        if blocked_reason:
+            return JsonResponse({'error': blocked_reason}, status=403)
 
         shorten_url_code = generate_shorten_url(original_url)
         shorten_url = f"https://{BASE_NAME}/{shorten_url_code}"
