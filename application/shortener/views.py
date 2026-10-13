@@ -115,7 +115,12 @@ def redirect_original_url(request, shorten_url_code):
 
 
 def redirect_book_short_code(request, code):
-    # 수업 중 한 교실(같은 공인 IP)에서 수십 명이 동시에 열어도 막히지 않도록 횟수 제한을 두지 않는다(DB 조회 없음).
+    # 수업 중 한 교실(같은 공인 IP)에서 수십 명이 동시에 열어도 막히지 않도록 횟수 제한을 두지 않는다.
+    # 교재 코드: <교재 번호>-<장>-<절> (예: 1055-08-06). 예전에 숫자로만 만든 단축 주소가 있으면 그쪽이 먼저다.
+    shorten_url = f"https://{BASE_NAME}/{code}"
+    original_url = cache.get(shorten_url) or fetch_and_cache_original_url(shorten_url)
+    if original_url and not check_blocked_url(original_url, include_self=False):
+        return redirect(original_url)
     query = request.META.get('QUERY_STRING', '')
     return HttpResponseRedirect(f"{WENIVERSITY_URL}/b/{code}/" + (f"?{query}" if query else ''))
 
