@@ -3,7 +3,7 @@ from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_http_methods
 from django_ratelimit.decorators import ratelimit
-from django.http import JsonResponse, HttpResponsePermanentRedirect
+from django.http import JsonResponse, HttpResponsePermanentRedirect, HttpResponseRedirect
 from .models import ShortenURL
 from .blocklist import check_url as check_blocked_url
 import hashlib
@@ -14,6 +14,15 @@ import re
 import json
 
 BASE_NAME = settings.BASE_NAME
+WENIVERSITY_URL = settings.WENIVERSITY_URL.rstrip('/')
+
+# 숫자(·하이픈)로만 된 코드는 위니버시티 교재 단축 주소로 남겨 둔다. 위니버시티가 교재마다 숫자 코드를 정하고
+# weniv.link는 DB를 보지 않고 넘기기만 하므로, 교재가 새로 생겨도 여기서 할 일이 없다.
+BOOK_SHORT_CODE_PATTERN = re.compile(r'[0-9]+(?:-[0-9]+)*')
+
+
+def is_book_short_code(code: str) -> bool:
+    return bool(BOOK_SHORT_CODE_PATTERN.fullmatch(code))
 
 
 @ratelimit(key='ip', rate='8/m', block=False)
@@ -77,6 +86,8 @@ def generate_shorten_url(original_url: str) -> str:
         temp_url = original_url + str(attempt)
         hash_data = hashlib.sha256(temp_url.encode('utf-8')).digest()
         shorten_url_code = base64.urlsafe_b64encode(hash_data).decode('utf-8')[:6]
+        if is_book_short_code(shorten_url_code):
+            continue
         if not ShortenURL.objects.filter(shorten_url__endswith=shorten_url_code).exists():
             return shorten_url_code
     raise ValueError("Failed to generate a unique shorten URL after multiple attempts")
@@ -101,6 +112,12 @@ def redirect_original_url(request, shorten_url_code):
         # 자기 도메인은 기존 체인이 끊기지 않도록 생성 단계에서만 막는다.
         return redirect('/')
     return redirect(original_url)
+
+
+def redirect_book_short_code(request, code):
+    # 수업 중 한 교실(같은 공인 IP)에서 수십 명이 동시에 열어도 막히지 않도록 횟수 제한을 두지 않는다(DB 조회 없음).
+    query = request.META.get('QUERY_STRING', '')
+    return HttpResponseRedirect(f"{WENIVERSITY_URL}/b/{code}/" + (f"?{query}" if query else ''))
 
 
 def fetch_and_cache_original_url(shorten_url):
@@ -156,6 +173,10 @@ def staff_index(request):
         if not re.match(r'^[a-zA-Z0-9-]+$', url_name):
             return render(request, 'shortener/staff.html',
                           {'error': 'Invalid URL name. Use only alphanumeric characters.'})
+
+        if is_book_short_code(url_name):
+            return render(request, 'shortener/staff.html',
+                          {'error': '숫자로만 된 이름은 위니버시티 교재 단축 주소용이라 쓸 수 없습니다. 영문을 섞어 주세요.'})
 
         ## URL이 http:// 또는 https://로 시작하는지 확인, 대소문자, 숫자만 적용되었는지 확인
         if "http" not in original_url or "https" not in original_url:
