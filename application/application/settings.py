@@ -174,6 +174,8 @@ CACHES = {
 RATELIMIT_IP_META_KEY = 'HTTP_X_FORWARDED_FOR' if env('MODE') != 'dev' else 'REMOTE_ADDR'
 # DISCORD_MAU_WEB_HOOK = env('DISCORD_MAU_WEB_HOOK')
 BASE_NAME = env('BASE_NAME', default="weniv.link")
+# 숫자 코드(교재 단축 주소)를 넘길 위니버시티 주소
+WENIVERSITY_URL = env('WENIVERSITY_URL', default="https://weniversity.co.kr")
 
 # 단축 대상에서 차단할 도메인/TLD 를 .env 에서 콤마로 구분해 추가할 수 있다.
 # 예) EXTRA_BLOCKED_DOMAINS=example.com,spam.co.kr
