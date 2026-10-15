@@ -125,6 +125,17 @@ def redirect_book_short_code(request, code):
     return HttpResponseRedirect(f"{WENIVERSITY_URL}/b/{code}/" + (f"?{query}" if query else ''))
 
 
+def redirect_weroom_short_link(request, slug, page_id=None):
+    # 교재와 같이 한 교실의 동시 접속을 횟수 제한으로 막지 않는다. 외부 API·단축 DB를 기다리지 않고 넘긴다.
+    # 공개 여부는 위니버시티에서 매번 확인한다. 끄기·주소 변경에 영구 이동 캐시가 남지 않도록 302 + no-store.
+    path = f"/r/{slug.lower()}/" + (f"{page_id}/" if page_id else '')
+    query = request.META.get('QUERY_STRING', '')
+    response = HttpResponseRedirect(f"{WENIVERSITY_URL}{path}" + (f"?{query}" if query else ''))
+    response['Cache-Control'] = 'no-store'
+    response['X-Robots-Tag'] = 'noindex'
+    return response
+
+
 def fetch_and_cache_original_url(shorten_url):
     shorten_url = shorten_url.rstrip('/') if shorten_url.endswith('/') else shorten_url
     try:
