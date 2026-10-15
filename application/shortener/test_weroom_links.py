@@ -9,6 +9,11 @@ from .views import redirect_book_short_code, redirect_original_url, redirect_wer
 
 
 class WeroomLinksTest(SimpleTestCase):
+    def test_grouped_alphanumeric_code_keeps_leading_zeroes(self):
+        response = self.client.get('/r/km-012-034')
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].endswith('/r/km-012-034/'))
+
     def test_redirect_with_query(self):
         response = self.client.get('/r/Python-Study?from=class&week=2')
         self.assertEqual(response.status_code, 302)
