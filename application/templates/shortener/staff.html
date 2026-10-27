@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="{% static '/css/style.css' %}" />
     <link rel="stylesheet" href="{% static '/css/staff.css' %}" />
     <!-- <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <link rel="canonical" href="https://weniv.link" />
     <meta
@@ -34,7 +33,6 @@
     <meta name="twitter:image" content="{% static '/img/OG.png' %}" />
   </head>
   <body>
-    <script src="{% static '/js/staff.js' %}"></script>
 
     <div class="wrap">
       <header>
@@ -48,7 +46,29 @@
         </h1>
       </header>
 
-      {% if not shorten_url %}
+      {% if need_login %}
+      <section class="url-section">
+        <h2 class="section-title a11y-hidden">직원 확인</h2>
+        <form
+          action="{% url 'shortener:staff_login' %}"
+          method="post"
+          class="staff-url-form"
+        >
+          {% csrf_token %}
+          <label for="staff_password">직원 비밀번호를 입력해주세요</label>
+          <input
+            type="password"
+            class="form-control url-form__url"
+            id="staff_password"
+            name="password"
+            autocomplete="current-password"
+            required
+            autofocus
+          />
+          <button type="submit" class="url-form__button">확인</button>
+        </form>
+      </section>
+      {% elif not shorten_url %}
       <section class="url-section">
         <h2 class="section-title a11y-hidden">URL 단축 입력</h2>
         <form

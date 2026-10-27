@@ -23,7 +23,7 @@ jobs:
         script: |
           cd ~/projects/weniv_shortener_url
           git pull
-          docker compose down
+          # 새 이미지를 먼저 만든 뒤 바꿔 끼운다 (예전에는 내린 채로 빌드해 그동안 weniv.link가 멈췄다)
           docker compose build
           docker compose up -d
           

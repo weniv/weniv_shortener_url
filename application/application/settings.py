@@ -34,9 +34,13 @@ env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if env('MODE') == 'dev' else True
+# 운영에서 켜지면 오류가 날 때 소스 코드와 내부 DB·Redis 주소가 화면에 그대로 나온다. 개발(MODE=dev)에서만 켠다.
+DEBUG = env('MODE', default='prod') == 'dev'
+IS_DEV = DEBUG
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['weniv.link', 'localhost', '127.0.0.1'])
+if not IS_DEV and '*' in ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ['weniv.link', 'localhost', '127.0.0.1']
 
 # APPEND_SLASH = False
 
@@ -171,7 +175,9 @@ CACHES = {
 
 
 
-RATELIMIT_IP_META_KEY = 'HTTP_X_FORWARDED_FOR' if env('MODE') != 'dev' else 'REMOTE_ADDR'
+# XForwardedForMiddleware가 프록시가 붙인 실제 접속 IP를 REMOTE_ADDR에 넣는다.
+# X-Forwarded-For 전체를 키로 쓰면 첫 값을 바꿔 보내는 것만으로 횟수 제한을 피할 수 있다.
+RATELIMIT_IP_META_KEY = 'REMOTE_ADDR'
 # DISCORD_MAU_WEB_HOOK = env('DISCORD_MAU_WEB_HOOK')
 BASE_NAME = env('BASE_NAME', default="weniv.link")
 # 숫자 코드(교재 단축 주소)를 넘길 위니버시티 주소
@@ -189,3 +195,20 @@ EXTRA_BLOCKED_TLDS = env('EXTRA_BLOCKED_TLDS', default='')
 # CELERY_TASK_SERIALIZER = 'json'
 # CELERY_TIMEZONE = 'Asia/Seoul'
 CSRF_TRUSTED_ORIGINS = ['https://weniv.link', 'https://dev.wenivops.co.kr']
+
+# 직원용 이름 지정 단축 비밀번호. 비워 두면 직원 페이지를 쓸 수 없다.
+STAFF_PASSWORD = env('STAFF_PASSWORD', default='')
+
+# 세션은 직원 로그인 표시에만 쓴다. DB 테이블 없이 서명한 쿠키로 둔다.
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_COOKIE_AGE = 60 * 60 * 12
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+if not IS_DEV:
+    # TLS는 Traefik이 끝내고 http로 넘긴다
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+    X_FRAME_OPTIONS = 'DENY'

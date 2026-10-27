@@ -7,13 +7,18 @@ from django.http import JsonResponse, HttpResponsePermanentRedirect, HttpRespons
 from .models import ShortenURL
 from .blocklist import check_url as check_blocked_url
 import hashlib
+import hmac
 import base64
+import logging
 from django.conf import settings
 from urllib.parse import urlparse
 import re
 import json
 
+logger = logging.getLogger(__name__)
+
 BASE_NAME = settings.BASE_NAME
+STAFF_SESSION_KEY = 'staff_ok'
 WENIVERSITY_URL = settings.WENIVERSITY_URL.rstrip('/')
 
 # 숫자(·하이픈)로만 된 코드는 위니버시티 교재 단축 주소로 남겨 둔다. 위니버시티가 교재마다 숫자 코드를 정하고
@@ -32,7 +37,7 @@ def index(request):
         return JsonResponse({'error': 'Rate limit exceeded'}, status=429)
 
     if request.method == 'POST':
-        original_url = request.POST.get('original_url')
+        original_url = (request.POST.get('original_url') or '').strip()
         if not is_valid_url(original_url):
             return render(request, 'shortener/index.html', {'error': 'Invalid URL'})
         blocked_reason = check_blocked_url(original_url)
@@ -57,8 +62,8 @@ def manage_url(original_url):
         return context
     except ShortenURL.DoesNotExist:
         return {'error': 'Shorten URL does not exist.'}
-    except ValueError as e:
-        return {'error': str(e)}
+    except ValueError:
+        return {'error': '단축 주소를 만들지 못했습니다. 잠시 뒤 다시 시도해 주세요.'}
 
 
 def generate_or_fetch_shorten_url(original_url):
@@ -111,7 +116,15 @@ def redirect_original_url(request, shorten_url_code):
         # 차단 목록에 추가되기 전에 저장된 URL 도 연결되지 않도록 한다.
         # 자기 도메인은 기존 체인이 끊기지 않도록 생성 단계에서만 막는다.
         return redirect('/')
-    return redirect(original_url)
+    return redirect_to_saved_url(original_url)
+
+
+def redirect_to_saved_url(original_url):
+    # 예전에 앞에 공백이 붙은 채 저장된 주소가 있다. http(s)가 아닌 주소(javascript: 등)는 넘기지 않는다.
+    target = original_url.strip()
+    if not is_valid_url(target):
+        return redirect('/')
+    return redirect(target)
 
 
 def redirect_book_short_code(request, code):
@@ -120,7 +133,7 @@ def redirect_book_short_code(request, code):
     shorten_url = f"https://{BASE_NAME}/{code}"
     original_url = cache.get(shorten_url) or fetch_and_cache_original_url(shorten_url)
     if original_url and not check_blocked_url(original_url, include_self=False):
-        return redirect(original_url)
+        return redirect_to_saved_url(original_url)
     query = request.META.get('QUERY_STRING', '')
     return HttpResponseRedirect(f"{WENIVERSITY_URL}/b/{code}/" + (f"?{query}" if query else ''))
 
@@ -147,11 +160,13 @@ def fetch_and_cache_original_url(shorten_url):
 
 
 def is_valid_url(url) -> bool:
+    if not url or not isinstance(url, str) or len(url) > 2000:
+        return False
     try:
         result = urlparse(url)
-        return all([result.scheme, result.netloc])
     except ValueError:
         return False
+    return result.scheme.lower() in ('http', 'https') and bool(result.netloc)
 
 
 def generate_staff_url(original_url, url_name):
@@ -178,25 +193,55 @@ def generate_staff_url(original_url, url_name):
     return context
 
 
+def is_staff(request) -> bool:
+    return bool(settings.STAFF_PASSWORD) and request.session.get(STAFF_SESSION_KEY) is True
+
+
+def check_staff_password(password: str) -> bool:
+    expected = settings.STAFF_PASSWORD
+    if not expected or not password:
+        return False
+    return hmac.compare_digest(password.encode('utf-8'), expected.encode('utf-8'))
+
+
+@ratelimit(key='ip', rate='5/m', method='POST', block=False)
+def staff_login(request):
+    if request.method != 'POST':
+        return redirect('shortener:staff_index')
+    if getattr(request, 'limited', False):
+        return render(request, 'shortener/staff.html',
+                      {'need_login': True, 'error': '잠시 뒤 다시 시도해 주세요.'}, status=429)
+    if not settings.STAFF_PASSWORD:
+        return render(request, 'shortener/staff.html',
+                      {'need_login': True, 'error': '지금은 직원 페이지를 쓸 수 없습니다.'}, status=403)
+    if not check_staff_password(request.POST.get('password', '')):
+        return render(request, 'shortener/staff.html',
+                      {'need_login': True, 'error': '비밀번호가 맞지 않습니다.'}, status=403)
+    request.session.cycle_key()
+    request.session[STAFF_SESSION_KEY] = True
+    return redirect('shortener:staff_index')
+
+
 def staff_index(request):
+    # 직원 확인은 서버에서 한다. 예전에는 화면 스크립트에서만 비밀번호를 확인해 주소만 알면 누구나 쓸 수 있었다.
+    if not is_staff(request):
+        return render(request, 'shortener/staff.html', {'need_login': True},
+                      status=403 if request.method == 'POST' else 200)
+
     if request.method == 'POST':
-        original_url = request.POST.get('original_url')
-        url_name = request.POST.get('url_name')
+        original_url = (request.POST.get('original_url') or '').strip()
+        url_name = (request.POST.get('url_name') or '').strip()
 
         if not is_valid_url(original_url):
             return render(request, 'shortener/staff.html', {'error': 'Invalid URL format'})
 
-        if not re.match(r'^[a-zA-Z0-9-]+$', url_name):
+        if not re.fullmatch(r'[a-zA-Z0-9-]{1,100}', url_name):
             return render(request, 'shortener/staff.html',
                           {'error': 'Invalid URL name. Use only alphanumeric characters.'})
 
         if is_book_short_code(url_name):
             return render(request, 'shortener/staff.html',
                           {'error': '숫자로만 된 이름은 위니버시티 교재 단축 주소용이라 쓸 수 없습니다. 영문을 섞어 주세요.'})
-
-        ## URL이 http:// 또는 https://로 시작하는지 확인, 대소문자, 숫자만 적용되었는지 확인
-        if "http" not in original_url or "https" not in original_url:
-            return render(request, 'shortener/staff.html', {'error': 'URL must start with http:// or https://'})
 
         blocked_reason = check_blocked_url(original_url)
         if blocked_reason:
@@ -213,10 +258,17 @@ def staff_index(request):
 
 @csrf_exempt
 @require_http_methods(['POST'])
+@ratelimit(key='ip', rate='8/m', block=False)
 def api_generate_shorten_url(request):
+    if getattr(request, 'limited', False):
+        return JsonResponse({'error': 'Rate limit exceeded'}, status=429)
     try:
         data = json.loads(request.body)
+        if not isinstance(data, dict):
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
         original_url = data.get('url')
+        if isinstance(original_url, str):
+            original_url = original_url.strip()
 
         if not original_url:
             return JsonResponse({'error': 'URL is required'}, status=400)
@@ -228,19 +280,12 @@ def api_generate_shorten_url(request):
         if blocked_reason:
             return JsonResponse({'error': blocked_reason}, status=403)
 
-        shorten_url_code = generate_shorten_url(original_url)
-        shorten_url = f"https://{BASE_NAME}/{shorten_url_code}"
-
-        if ShortenURL.objects.filter(shorten_url=shorten_url).exists():
-            return JsonResponse(JsonResponse({'shorten_url': shorten_url}))
-        else:
-            ShortenURL.objects.create(
-                original_url=original_url,
-                shorten_url=shorten_url
-            )
-
+        # 같은 원본 주소는 화면에서 만든 것과 같은 단축 주소를 돌려준다.
+        shorten_url, _ = generate_or_fetch_shorten_url(original_url)
         return JsonResponse({'shorten_url': shorten_url})
-    except json.JSONDecodeError:
+    except (json.JSONDecodeError, UnicodeDecodeError):
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+    except Exception:
+        # 오류 내용(내부 주소·쿼리)은 응답에 싣지 않고 서버 로그에만 남긴다.
+        logger.exception('단축 주소 API 오류')
+        return JsonResponse({'error': 'Server error'}, status=500)

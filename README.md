@@ -68,8 +68,10 @@ python manage.py runserver
 ```env
 # 기본 설정
 SECRET_KEY=your-secret-key-here
-MODE=dev  # dev 또는 prod
+MODE=dev  # dev 또는 prod. DEBUG는 dev에서만 켜진다 (운영에서 켜면 오류 화면에 소스·내부 주소가 나온다)
 BASE_NAME=weniv.link
+ALLOWED_HOSTS=weniv.link,localhost,127.0.0.1
+STAFF_PASSWORD=  # 직원용 이름 지정 단축(/staff/shorten_url) 비밀번호. 비우면 직원 페이지를 쓸 수 없다
 
 # 데이터베이스
 DB_NAME=shortener_db
