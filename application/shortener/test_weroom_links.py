@@ -5,7 +5,7 @@ from unittest.mock import patch
 from django.test import SimpleTestCase
 from django.urls import Resolver404, resolve
 
-from .views import redirect_book_short_code, redirect_original_url, redirect_weroom_short_link
+from .views import redirect_book_short_code, redirect_original_url, redirect_study_short_link, redirect_weroom_short_link
 
 
 class WeroomLinksTest(SimpleTestCase):
@@ -37,6 +37,16 @@ class WeroomLinksTest(SimpleTestCase):
         self.assertEqual(resolve('/1055-08-06/').func, redirect_book_short_code)
         self.assertEqual(resolve('/2026aid-g/').func, redirect_original_url)
         self.assertEqual(resolve('/r/python-study/').func, redirect_weroom_short_link)
+        self.assertEqual(resolve('/s/abc234').func, redirect_study_short_link)
+        self.assertEqual(resolve('/sabc23/').func, redirect_original_url)
+
+    def test_study_short_link(self):
+        for path in ('/s/abc234', '/s/ABC234/'):
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, 302)
+            self.assertTrue(response['Location'].endswith('/study/join/?code=ABC234'))
+            self.assertEqual(response['Cache-Control'], 'no-store')
+        self.assertEqual(self.client.get('/s/abc2345').status_code, 404)
 
     def test_invalid_names_do_not_match(self):
         for path in ('/r/-bad/', '/r/bad-/', '/r/ab/', '/r/' + 'a' * 41 + '/', '/r/abc/extra/path/'):

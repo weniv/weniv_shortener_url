@@ -149,6 +149,15 @@ def redirect_weroom_short_link(request, slug, page_id=None):
     return response
 
 
+def redirect_study_short_link(request, code):
+    # 스터디 초대 짧은 링크 (2026-10-27): 코드가 살아 있는지·만료는 위니버시티가 매번 확인한다. 여기서는 넘기기만 한다.
+    # 한 교실이 함께 QR을 찍으므로 횟수 제한을 두지 않고, 30분 뒤 끝나는 링크라 영구 이동 캐시가 남지 않게 302 + no-store.
+    response = HttpResponseRedirect(f"{WENIVERSITY_URL}/study/join/?code={code.upper()}")
+    response['Cache-Control'] = 'no-store'
+    response['X-Robots-Tag'] = 'noindex'
+    return response
+
+
 def fetch_and_cache_original_url(shorten_url):
     shorten_url = shorten_url.rstrip('/') if shorten_url.endswith('/') else shorten_url
     try:
