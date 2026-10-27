@@ -86,6 +86,14 @@ REDIS_PORT=6379
 REDIS_PASSWORD=your-redis-password
 ```
 
+## 배포
+
+- `master`에 push하면 GitHub Actions가 서버에서 `git pull` → `docker compose build` → `docker compose up -d`(새 이미지를 먼저 만든 뒤 바꿔 끼움)를 한다.
+- 앱 컨테이너는 root가 아닌 `app`(uid·gid 10001)으로 돈다(`no-new-privileges`, 모든 커널 권한 뺌). 정적 파일 볼륨 `shortener_static_volume`이 예전 root 소유라면 처음 한 번 바꾼다:
+  `docker run --rm -u 0 -v shortener_static_volume:/v alpine chown -R 10001:10001 /v`
+- `.env`는 이미지에 넣지 않고(`.dockerignore`) compose `env_file`로만 넘긴다.
+- DB는 슈퍼유저가 아닌 앱 전용 계정으로 붙는다. 만드는 법은 `deploy/app-db-role.sql` 머리말(비밀번호는 저장소에 두지 않는다).
+
 ## API 사용법
 
 ### URL 단축 생성

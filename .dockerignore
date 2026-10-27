@@ -1,0 +1,11 @@
+.git
+.github
+.idea
+claude
+사내서버접속.txt
+**/__pycache__
+**/*.pyc
+application/staticfiles
+# 비밀값(.env와 백업)은 이미지에 굽지 않는다. 운영 값은 compose env_file(application/.env)로만 넘긴다.
+application/.env
+application/.env.*

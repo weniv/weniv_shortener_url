@@ -3,6 +3,11 @@ services:
     container_name: shortener_web
     build: .
     restart: always
+    # 앱은 Dockerfile의 USER app(10001)으로 돈다. 권한 올리기·커널 권한도 막는다.
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     env_file:
       - ./application/.env
     volumes:
